@@ -133,6 +133,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CircularDoublyLinkedList.h" />
+    <ClInclude Include="Department.h" />
+    <ClInclude Include="Group.h" />
     <ClInclude Include="Schedule.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

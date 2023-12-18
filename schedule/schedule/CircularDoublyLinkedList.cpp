@@ -1,6 +1,6 @@
 #include "CircularDoublyLinkedList.h"
 
-void CircularDoublyLinkedList::insert(int data)
+void MyList::insert(int data)
 {
     Node* newNode = new Node(data);
     if (head == nullptr)
@@ -18,7 +18,7 @@ void CircularDoublyLinkedList::insert(int data)
     }
 }
 
-void CircularDoublyLinkedList::remove(int data)
+void MyList::remove(int data)
 {
     if (head == nullptr) 
         return;
@@ -41,7 +41,7 @@ void CircularDoublyLinkedList::remove(int data)
     } while (curr != head);
 }
 
-void CircularDoublyLinkedList::print()
+void MyList::print()
 {
     if (head == nullptr) 
     {

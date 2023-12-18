@@ -1,10 +1,9 @@
 #include "iostream"
 
 using namespace std;
-class CircularDoublyLinkedList
+struct MyList
 {
-public:
-	CircularDoublyLinkedList()
+	MyList()
 	{
 		head = nullptr;
 	}
@@ -12,7 +11,6 @@ public:
 	void insert(int data);
 	void remove(int data);
 	void print();
-private:
 	struct Node
 	{
 		int data;
