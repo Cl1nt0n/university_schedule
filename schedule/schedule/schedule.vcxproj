@@ -133,9 +133,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CircularDoublyLinkedList.h" />
-    <ClInclude Include="Department.h" />
-    <ClInclude Include="Group.h" />
-    <ClInclude Include="Schedule.h" />
+    <ClInclude Include="Functions.h" />
+    <ClInclude Include="Structs.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
