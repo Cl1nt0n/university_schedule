@@ -136,6 +136,12 @@
     <ClInclude Include="Functions.h" />
     <ClInclude Include="Structs.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="Departments.txt" />
+    <Text Include="Groups.txt" />
+    <Text Include="Lecturers.txt" />
+    <Text Include="Schedules.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

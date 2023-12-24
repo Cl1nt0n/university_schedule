@@ -36,4 +36,18 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="Departments.txt">
+      <Filter>Файлы ресурсов</Filter>
+    </Text>
+    <Text Include="Groups.txt">
+      <Filter>Файлы ресурсов</Filter>
+    </Text>
+    <Text Include="Lecturers.txt">
+      <Filter>Файлы ресурсов</Filter>
+    </Text>
+    <Text Include="Schedules.txt">
+      <Filter>Файлы ресурсов</Filter>
+    </Text>
+  </ItemGroup>
 </Project>
