@@ -131,7 +131,7 @@ Department* find_department_by_id(int id)
 	{
 		if (department->id == id)
 			return department;
-		
+
 		department = department->next;
 	} while (department != begin_department);
 
@@ -149,7 +149,7 @@ Group* find_group_by_id(int id)
 	{
 		if (group->id == id)
 			return group;
-		
+
 		group = group->next;
 	} while (group != begin_group);
 
@@ -159,12 +159,16 @@ Group* find_group_by_id(int id)
 Group* find_groups_by_department_id(int department_id)
 {
 	Group* group = begin_group;
+
+	if (group == nullptr)
+		return nullptr;
+
 	Group* temp = new Group(group->department_id, group->id);
 	temp->next = nullptr;
 	temp->previous = nullptr;
 	Group* begin_temp = temp;
 
-	while (group != nullptr)
+	do
 	{
 		if (group->department_id == department_id)
 		{
@@ -173,15 +177,15 @@ Group* find_groups_by_department_id(int department_id)
 			temp->next->previous = temp;
 			temp = temp->next;
 		}
-		if (group->next == begin_group)
-			break;
 		group = group->next;
-	}
+	} while (group != begin_group);
+
 	if (temp->next == nullptr)
 	{
 		delete temp;
 		return nullptr;
 	}
+
 	temp->next = begin_temp->next;
 	begin_temp->next->previous = temp;
 	begin_temp = begin_temp->next;
@@ -200,9 +204,27 @@ Lecturer* find_lecturer_by_id(int id)
 	{
 		if (lecturer->id == id)
 			return lecturer;
-		
+
 		lecturer = lecturer->next;
 	} while (lecturer != begin_lecturer);
+
+	return nullptr;
+}
+
+Schedule* find_schedule_by_id(int id)
+{
+	Schedule* schedule = begin_schedule;
+
+	if (schedule == nullptr)
+		return nullptr;
+
+	do
+	{
+		if (schedule->id == id)
+			return schedule;
+
+		schedule = schedule->next;
+	} while (schedule != begin_schedule);
 
 	return nullptr;
 }
@@ -210,29 +232,33 @@ Lecturer* find_lecturer_by_id(int id)
 Lecturer* find_lecturers_by_name(string name)
 {
 	Lecturer* lecturer = begin_lecturer;
+
+	if (lecturer == nullptr)
+		return nullptr;
+
 	Lecturer* temp = new Lecturer(lecturer->name, lecturer->department_id, lecturer->id);
 	temp->next = nullptr;
 	temp->previous = nullptr;
 	Lecturer* begin_temp = temp;
 
-	while (lecturer != nullptr)
+	do
 	{
 		if (lecturer->name == name)
 		{
-			temp->next = new Lecturer(name, lecturer->department_id, lecturer->id);
+			temp->next = new Lecturer(lecturer->name, lecturer->department_id, lecturer->id);
 			begin_temp->previous = temp->next;
 			temp->next->previous = temp;
 			temp = temp->next;
 		}
-		if (lecturer->next == begin_lecturer)
-			break;
 		lecturer = lecturer->next;
-	}
+	} while (lecturer != begin_lecturer);
+
 	if (temp->next == nullptr)
 	{
 		delete temp;
 		return nullptr;
 	}
+
 	temp->next = begin_temp->next;
 	begin_temp->next->previous = temp;
 	begin_temp = begin_temp->next;
@@ -243,12 +269,16 @@ Lecturer* find_lecturers_by_name(string name)
 Lecturer* find_lecturers_by_department_id(int department_id)
 {
 	Lecturer* lecturer = begin_lecturer;
+
+	if (lecturer == nullptr)
+		return nullptr;
+
 	Lecturer* temp = new Lecturer(lecturer->name, lecturer->department_id, lecturer->id);
 	temp->next = nullptr;
 	temp->previous = nullptr;
 	Lecturer* begin_temp = temp;
 
-	while (lecturer != nullptr)
+	do
 	{
 		if (lecturer->department_id == department_id)
 		{
@@ -257,15 +287,15 @@ Lecturer* find_lecturers_by_department_id(int department_id)
 			temp->next->previous = temp;
 			temp = temp->next;
 		}
-		if (lecturer->next == begin_lecturer)
-			break;
 		lecturer = lecturer->next;
-	}
+	} while (lecturer != begin_lecturer);
+
 	if (temp->next == nullptr)
 	{
 		delete temp;
 		return nullptr;
 	}
+
 	temp->next = begin_temp->next;
 	begin_temp->next->previous = temp;
 	begin_temp = begin_temp->next;
@@ -276,6 +306,10 @@ Lecturer* find_lecturers_by_department_id(int department_id)
 Schedule* find_schedule_by_date(string hour, string minute, string day, string month, string year)
 {
 	Schedule* schedule = begin_schedule;
+
+	if (schedule == nullptr)
+		return nullptr;
+
 	Schedule* temp = new Schedule(schedule->subject_name,
 		schedule->id,
 		schedule->group_id, schedule->lecturer_id, schedule->class_room_id, schedule->date_of_lesson);
@@ -283,11 +317,11 @@ Schedule* find_schedule_by_date(string hour, string minute, string day, string m
 	temp->previous = nullptr;
 	Schedule* begin_temp = temp;
 
-	while (schedule != nullptr)
+	do
 	{
-		if (schedule->date_of_lesson.day == day 
-			&& schedule->date_of_lesson.hour == hour 
-			&& schedule->date_of_lesson.minute == minute 
+		if (schedule->date_of_lesson.day == day
+			&& schedule->date_of_lesson.hour == hour
+			&& schedule->date_of_lesson.minute == minute
 			&& schedule->date_of_lesson.month == month
 			&& schedule->date_of_lesson.year == year)
 		{
@@ -298,15 +332,15 @@ Schedule* find_schedule_by_date(string hour, string minute, string day, string m
 			temp->next->previous = temp;
 			temp = temp->next;
 		}
-		if (schedule->next == begin_schedule)
-			break;
 		schedule = schedule->next;
-	}
+	} while (schedule != begin_schedule);
+
 	if (temp->next == nullptr)
 	{
 		delete temp;
 		return nullptr;
 	}
+
 	temp->next = begin_temp->next;
 	begin_temp->next->previous = temp;
 	begin_temp = begin_temp->next;
@@ -320,14 +354,14 @@ Department* find_department_by_name(string name)
 
 	if (department == nullptr)
 		return nullptr;
-	
+
 	do
 	{
 		if (department->name == name)
 			return department;
-		
+
 		department = department->next;
-	}while (department != begin_department);
+	} while (department != begin_department);
 
 	return nullptr;
 }
@@ -459,7 +493,7 @@ void print_schedules(Schedule* schedule)
 	Schedule* start = schedule;
 	if (schedule == nullptr)
 	{
-		cout << "Список расписаний пуст." << endl; 
+		cout << "Список расписаний пуст." << endl;
 		return;
 	}
 	do
@@ -692,7 +726,7 @@ void check_date_fields(int year_int, int& error_code, int minute_int, int hour_i
 	}
 }
 
-void check_date(string str_date, int& error_code, int& hour_int, int &minute_int, int& day_int, int& month_int, int& year_int,
+void check_date(string str_date, int& error_code, int& hour_int, int& minute_int, int& day_int, int& month_int, int& year_int,
 	string& year, string& minute, string& hour, string& month, string& day)
 {
 	int index = 0;
@@ -841,29 +875,89 @@ void write_schedules(string file_name)
 		str << schedule->date_of_lesson.minute << ' ';
 		str << schedule->date_of_lesson.day << ':';
 		str << schedule->date_of_lesson.month << ':';
-		str	<< schedule->date_of_lesson.year << endl;
+		str << schedule->date_of_lesson.year << endl;
 		schedule = schedule->next;
 	} while (schedule != begin_schedule);
 
 	str.close();
 }
 
-void remove_all_schedules_by_lecturer_id(int lecturer_id)
+void remove_all_schedules_by_parameter(int parameter, int(*function)(Schedule*))
 {
-	Schedule* removing_schedule = find_schedule_by_parameters(lecturer_id, get_schedule_lecturer_id);
-	Schedule* end_removing_schedule = removing_schedule->previous;
-	Schedule* current = begin_schedule;
+	Schedule* schedule = begin_schedule;
 
-	if (removing_schedule == nullptr)
+	if (schedule == nullptr)
+	{
+		cout << "Список расписаний пуст." << endl;
 		return;
+	}
 
 	do
 	{
-		while (current != end_schedule)
+		int id = function(schedule);
+		int schedule_id = schedule->id;
+		if (id == parameter)
 		{
-
+			schedule = schedule->next;
+			remove_element_from_list(begin_schedule, end_schedule, schedule_id);
+			continue;
 		}
-	} while (removing_schedule != end_removing_schedule);
+		schedule = schedule->next;
+	}while (schedule != begin_schedule);
+}
+
+void remove_all_lecturers_by_department_id(int department_id)
+{
+	Lecturer* lecturer = begin_lecturer;
+
+	if (begin_lecturer == nullptr)
+	{
+		cout << "Список преподавателей пуст." << endl; 
+		return;
+	}
+
+	int id = lecturer->department_id;
+	int lecturer_id = lecturer->id;
+
+	do
+	{
+		id = lecturer->department_id;
+		lecturer_id = lecturer->id;
+		if (id == department_id)
+		{
+			lecturer = lecturer->next;
+			remove_all_schedules_by_parameter(lecturer_id, get_schedule_lecturer_id);
+			remove_element_from_list(begin_lecturer, end_lecturer, lecturer_id);
+
+			continue;
+		}
+		lecturer = lecturer->next;
+	} while (lecturer != begin_lecturer);
+}
+
+void remove_all_groups_by_department_id(int department_id)
+{
+	Group* group = begin_group;
+
+	if (begin_group== nullptr)
+	{
+		cout << "Список групп пуст." << endl;
+		return;
+	}
+
+	do
+	{
+		int id = group->department_id;
+		int group_id = group->id;
+		if (id == department_id)
+		{
+			group = group->next;
+			remove_all_schedules_by_parameter(group_id, get_schedule_group_id);
+			remove_element_from_list(begin_group, end_group, group_id);
+			continue;
+		}
+		group = group->next;
+	} while (group != begin_group);
 }
 
 void check_file(string file_name, int& error_code)

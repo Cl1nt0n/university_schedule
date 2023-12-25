@@ -1,4 +1,20 @@
-﻿#include <iostream>
+﻿/*************************************************************************
+*                                                                        *
+*           КУРСОВАЯ РАБОТА по дисциплине ПРОГРАММИРОВАНИЕ               *
+*                                                                        *
+**************************************************************************
+*Project type : Visual Studio Solution                                   *
+*Project name : Курсач                                                   *
+*File name    : main.cpp                                                 *
+*Language     : CPP, MSVS 2022                                           *
+*Programmer   : Чиняков Игорь Павлович, М3О-210Б-22                      *
+*Modified by  :                                                          *
+*Created      : 20.12.2023                                               *
+*Last revision: 26.12.2023                                               *
+*Comment      : Списочные базы данных    					             *
+*************************************************************************/
+
+#include <iostream>
 #include <fstream>
 #include <string>
 #include <Windows.h>
@@ -46,14 +62,8 @@ void print_menu()
 	cout << "18 - Поиск преподавателей по имени." << endl;
 	cout << "19 - Поиск преподавателей по id кафедры." << endl;
 	cout << "20 - Поиск групп по id кафедры." << endl;
-	cout << "0  - Выход из программы. Сохранение изменений" << endl;
+	cout << "0  - Выход из программы. Сохранение изменений." << endl;
 }
-
-typedef int (*get_int)(Schedule* schedule);
-get_int int_functions_schedule[3] = { get_schedule_group_id, get_schedule_lecturer_id, get_schedule_class_room_id };
-
-typedef string(*get_string)(Schedule* schedule);
-get_string string_functions_schedule[1] = { get_schedule_subject_name };
 
 int main()
 {
@@ -114,6 +124,10 @@ int main()
 		int year_int = -1, minute_int = -1, hour_int = -1, month_int = -1, day_int = -1;
 		string year = "", minute = "", hour = "", month = "", day = "";
 		Date date;
+		Schedule* schedule = nullptr;
+		Lecturer* lecturer = nullptr;
+		Group* group = nullptr;
+		Department* department = nullptr;
 
 		switch (command)
 		{
@@ -137,7 +151,11 @@ int main()
 				cin.clear();
 				cin.ignore(10000, '\n');
 			}
-			print_schedules(find_schedule_by_parameters(class_room_id, int_functions_schedule[2]));
+
+			schedule = find_schedule_by_parameters(class_room_id, get_schedule_class_room_id);
+			print_schedules(schedule);
+			clear_list(schedule, schedule->previous);
+			print_schedules(schedule);
 			break;
 		case 6:
 			cout << "Введите id преподавателя:" << endl;
@@ -147,7 +165,10 @@ int main()
 				cin.clear();
 				cin.ignore(10000, '\n');
 			}
-			print_schedules(find_schedule_by_parameters(lecturer_id, int_functions_schedule[1]));
+			schedule = find_schedule_by_parameters(lecturer_id, get_schedule_lecturer_id);
+			print_schedules(schedule); 
+			clear_list(schedule, schedule->previous);
+			print_schedules(schedule);
 			break;
 		case 7:
 			cout << "Введите номер группы:" << endl;
@@ -157,13 +178,19 @@ int main()
 				cin.clear();
 				cin.ignore(10000, '\n');
 			}
-			print_schedules(find_schedule_by_parameters(group_id, int_functions_schedule[0]));
+			schedule = find_schedule_by_parameters(group_id, get_schedule_group_id);
+			print_schedules(schedule);
+			clear_list(schedule, schedule->previous);
+			print_schedules(schedule);
 			break;
 		case 8:
 			cout << "Введите название предмета:" << endl;
 			getchar();
 			getline(cin, subject);
-			print_schedules(find_schedule_by_parameters(subject, string_functions_schedule[0]));
+			schedule = find_schedule_by_parameters(subject, get_schedule_subject_name);
+			print_schedules(schedule);
+			clear_list(schedule, schedule->previous);
+			print_schedules(schedule);
 			break;
 		case 9:
 			cout << "Введите дату в формате xx:xx xx:xx:xx:" << endl;
@@ -181,7 +208,10 @@ int main()
 				cout << "Ошибка в формате даты." << endl;
 				break;
 			}
-			print_schedules(find_schedule_by_date(hour, minute, day, month, year));
+			schedule = find_schedule_by_date(hour, minute, day, month, year);
+			print_schedules(schedule);
+			clear_list(schedule, schedule->previous);
+			print_schedules(schedule);
 			break;
 		case 10:
 			cout << "Введите название кафедры." << endl;
@@ -293,7 +323,34 @@ int main()
 				cin.clear();
 				cin.ignore(10000, '\n');
 			}
+
+			department = find_department_by_id(department_id);
+			if (department == nullptr)
+			{
+				cout << "Кафедра не найдена." << endl; 
+				break;
+			}
+
+			remove_all_groups_by_department_id(department_id);
+			remove_all_lecturers_by_department_id(department_id);
 			remove_element_from_list(begin_department, end_department, department_id);
+			break;
+		case 15:
+			cout << "Введите номер группы:" << endl;
+			while (!(cin >> group_id))
+			{
+				cout << "Ошибка. Вводимое значение должно быть числом." << endl;
+				cin.clear();
+				cin.ignore(10000, '\n');
+			}
+			group = find_group_by_id(group_id);
+			if (group == nullptr)
+			{
+				cout << "Группа не найдена." << endl; 
+				break;
+			}
+			remove_all_schedules_by_parameter(group_id, get_schedule_group_id);
+			remove_element_from_list(begin_group, end_group, group_id);
 			break;
 		case 16:
 			cout << "Введите id преподавателя:" << endl;
@@ -303,20 +360,14 @@ int main()
 				cin.clear();
 				cin.ignore(10000, '\n');
 			}
-			/*Schedule* removing_schedules = find_schedule_by_parameters(lecturer_id, get_schedule_lecturer_id);
-			if (removing_schedules != nullptr)
+			lecturer = find_lecturer_by_id(lecturer_id);
+			if (lecturer == nullptr)
 			{
+				cout << "Преподаватель не найден." << endl;
 				break;
 			}
-			Schedule* end_removing_schedules = removing_schedules->previous;
-			while (removing_schedules != end_removing_schedules)
-			{
-				while (true)
-				{
-
-				}
-			}*/
-
+			remove_all_schedules_by_parameter(lecturer_id, get_schedule_lecturer_id);
+			remove_element_from_list(begin_lecturer, end_lecturer, lecturer_id);
 			break;
 		case 17:
 			cout << "Введите id расписания:" << endl;
@@ -326,7 +377,6 @@ int main()
 				cin.clear();
 				cin.ignore(10000, '\n');
 			}
-
 			remove_element_from_list(begin_schedule, end_schedule, schedule_id);
 			break;
 		case 18:

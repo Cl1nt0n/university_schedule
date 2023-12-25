@@ -1,2 +1,5 @@
 ﻿  Functions.cpp
+  main.cpp
+C:\Users\igorc\Documents\GitHub\university_schedule\schedule\schedule\main.cpp(70,12): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
+  Создание кода...
   schedule.vcxproj -> C:\Users\igorc\Documents\GitHub\university_schedule\schedule\x64\Debug\schedule.exe
