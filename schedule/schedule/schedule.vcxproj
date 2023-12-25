@@ -127,12 +127,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="CircularDoublyLinkedList.cpp" />
     <ClCompile Include="Functions.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CircularDoublyLinkedList.h" />
     <ClInclude Include="Functions.h" />
     <ClInclude Include="Structs.h" />
   </ItemGroup>

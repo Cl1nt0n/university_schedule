@@ -22,6 +22,7 @@ void insert_department(string name, int& error_code)
 		department->previous = end_department;
 		end_department = department;
 		department->next = begin_department;
+		begin_department->previous = end_department;
 	}
 	error_code = 0;
 }
@@ -55,6 +56,7 @@ void insert_group(int department_id, int id, int& error_code)
 		group->previous = end_group;
 		end_group = group;
 		group->next = begin_group;
+		begin_group->previous = end_group;
 	}
 	error_code = 0;
 }
@@ -87,6 +89,7 @@ void insert_schedule(string subject_name, int group_id, int lecturer_id, int cla
 		schedule->previous = end_schedule;
 		end_schedule = schedule;
 		schedule->next = begin_schedule;
+		begin_schedule->previous = end_schedule;
 	}
 	error_code = 0;
 }
@@ -112,6 +115,7 @@ void insert_lecturer(string name, int department_id, int& error_code)
 		lecturer->previous = end_lecturer;
 		end_lecturer = lecturer;
 		lecturer->next = begin_lecturer;
+		begin_lecturer->previous = end_lecturer;
 	}
 	error_code = 0;
 }
@@ -119,14 +123,17 @@ void insert_lecturer(string name, int department_id, int& error_code)
 Department* find_department_by_id(int id)
 {
 	Department* department = begin_department;
-	while (department != nullptr)
+
+	if (department == nullptr)
+		return nullptr;
+
+	do
 	{
 		if (department->id == id)
 			return department;
-		if (department->next == begin_department)
-			break;
+		
 		department = department->next;
-	}
+	} while (department != begin_department);
 
 	return nullptr;
 }
@@ -134,50 +141,139 @@ Department* find_department_by_id(int id)
 Group* find_group_by_id(int id)
 {
 	Group* group = begin_group;
-	while (group != nullptr)
+
+	if (group == nullptr)
+		return nullptr;
+
+	do
 	{
 		if (group->id == id)
 			return group;
+		
+		group = group->next;
+	} while (group != begin_group);
+
+	return nullptr;
+}
+
+Group* find_groups_by_department_id(int department_id)
+{
+	Group* group = begin_group;
+	Group* temp = new Group(group->department_id, group->id);
+	temp->next = nullptr;
+	temp->previous = nullptr;
+	Group* begin_temp = temp;
+
+	while (group != nullptr)
+	{
+		if (group->department_id == department_id)
+		{
+			temp->next = new Group(group->department_id, group->id);
+			begin_temp->previous = temp->next;
+			temp->next->previous = temp;
+			temp = temp->next;
+		}
 		if (group->next == begin_group)
 			break;
 		group = group->next;
 	}
+	if (temp->next == nullptr)
+	{
+		delete temp;
+		return nullptr;
+	}
+	temp->next = begin_temp->next;
+	begin_temp->next->previous = temp;
+	begin_temp = begin_temp->next;
 
-	return nullptr;
+	return begin_temp;
 }
 
 Lecturer* find_lecturer_by_id(int id)
 {
 	Lecturer* lecturer = begin_lecturer;
-	while (lecturer != nullptr)
+
+	if (lecturer == nullptr)
+		return nullptr;
+
+	do
 	{
 		if (lecturer->id == id)
 			return lecturer;
-		if (lecturer->next == begin_lecturer)
-			break;
+		
 		lecturer = lecturer->next;
-	}
+	} while (lecturer != begin_lecturer);
 
 	return nullptr;
 }
 
-Lecturer* find_lecturer_by_name(string name)
+Lecturer* find_lecturers_by_name(string name)
 {
 	Lecturer* lecturer = begin_lecturer;
+	Lecturer* temp = new Lecturer(lecturer->name, lecturer->department_id, lecturer->id);
+	temp->next = nullptr;
+	temp->previous = nullptr;
+	Lecturer* begin_temp = temp;
+
 	while (lecturer != nullptr)
 	{
 		if (lecturer->name == name)
-			return lecturer;
+		{
+			temp->next = new Lecturer(name, lecturer->department_id, lecturer->id);
+			begin_temp->previous = temp->next;
+			temp->next->previous = temp;
+			temp = temp->next;
+		}
 		if (lecturer->next == begin_lecturer)
 			break;
 		lecturer = lecturer->next;
 	}
+	if (temp->next == nullptr)
+	{
+		delete temp;
+		return nullptr;
+	}
+	temp->next = begin_temp->next;
+	begin_temp->next->previous = temp;
+	begin_temp = begin_temp->next;
 
-	return nullptr;
+	return begin_temp;
 }
 
-template <typename T>
-Schedule* find_schedule_parameters_id(T class_room_id, T(*function)(Schedule*))
+Lecturer* find_lecturers_by_department_id(int department_id)
+{
+	Lecturer* lecturer = begin_lecturer;
+	Lecturer* temp = new Lecturer(lecturer->name, lecturer->department_id, lecturer->id);
+	temp->next = nullptr;
+	temp->previous = nullptr;
+	Lecturer* begin_temp = temp;
+
+	while (lecturer != nullptr)
+	{
+		if (lecturer->department_id == department_id)
+		{
+			temp->next = new Lecturer(lecturer->name, lecturer->department_id, lecturer->id);
+			begin_temp->previous = temp->next;
+			temp->next->previous = temp;
+			temp = temp->next;
+		}
+		if (lecturer->next == begin_lecturer)
+			break;
+		lecturer = lecturer->next;
+	}
+	if (temp->next == nullptr)
+	{
+		delete temp;
+		return nullptr;
+	}
+	temp->next = begin_temp->next;
+	begin_temp->next->previous = temp;
+	begin_temp = begin_temp->next;
+
+	return begin_temp;
+}
+
+Schedule* find_schedule_by_date(string hour, string minute, string day, string month, string year)
 {
 	Schedule* schedule = begin_schedule;
 	Schedule* temp = new Schedule(schedule->subject_name,
@@ -189,7 +285,11 @@ Schedule* find_schedule_parameters_id(T class_room_id, T(*function)(Schedule*))
 
 	while (schedule != nullptr)
 	{
-		if (function(schedule) == class_room_id)
+		if (schedule->date_of_lesson.day == day 
+			&& schedule->date_of_lesson.hour == hour 
+			&& schedule->date_of_lesson.minute == minute 
+			&& schedule->date_of_lesson.month == month
+			&& schedule->date_of_lesson.year == year)
 		{
 			temp->next = new Schedule(schedule->subject_name,
 				schedule->id,
@@ -217,14 +317,17 @@ Schedule* find_schedule_parameters_id(T class_room_id, T(*function)(Schedule*))
 Department* find_department_by_name(string name)
 {
 	Department* department = begin_department;
-	while (department != nullptr)
+
+	if (department == nullptr)
+		return nullptr;
+	
+	do
 	{
 		if (department->name == name)
 			return department;
-		if (department->next == begin_department)
-			break;
+		
 		department = department->next;
-	}
+	}while (department != begin_department);
 
 	return nullptr;
 }
@@ -302,9 +405,14 @@ bool is_digit(char symbol)
 	return false;
 }
 
-void print_departments()
+void print_departments(Department* department)
 {
-	Department* department = begin_department;
+	Department* start = department;
+	if (department == nullptr)
+	{
+		cout << "Список групп пуст." << endl;
+		return;
+	}
 	do
 	{
 		cout << "Id кафедры: " << department->id << endl;
@@ -313,27 +421,37 @@ void print_departments()
 	} while (department != begin_department);
 }
 
-void print_groups()
+void print_groups(Group* group)
 {
-	Group* group = begin_group;
+	Group* start = group;
+	if (group == nullptr)
+	{
+		cout << "Список групп пуст." << endl;
+		return;
+	}
 	do
 	{
 		cout << "Id группы: " << group->id << endl;
 		cout << "Id кафедры: " << group->department_id << endl << endl;
 		group = group->next;
-	} while (group != begin_group);
+	} while (group != start);
 }
 
-void print_lecturers()
+void print_lecturers(Lecturer* lecturer)
 {
-	Lecturer* lecturer = begin_lecturer;
+	Lecturer* start = lecturer;
+	if (lecturer == nullptr)
+	{
+		cout << "Список преподавателей пуст." << endl;
+		return;
+	}
 	do
 	{
 		cout << "Id преподавателя: " << lecturer->id << endl;
 		cout << "Имя преподавателя: " << lecturer->name << endl;
 		cout << "Id кафедры: " << lecturer->department_id << endl << endl;
 		lecturer = lecturer->next;
-	} while (lecturer != begin_lecturer);
+	} while (lecturer != start);
 }
 
 void print_schedules(Schedule* schedule)
@@ -373,6 +491,11 @@ int get_schedule_lecturer_id(Schedule* schedule)
 int get_schedule_class_room_id(Schedule* schedule)
 {
 	return schedule->class_room_id;
+}
+
+string get_schedule_subject_name(Schedule* schedule)
+{
+	return schedule->subject_name;
 }
 
 void read_lecturers(string file_name, int& error_code)
@@ -464,142 +587,20 @@ void read_schedules(string file_name, int& error_code)
 			class_room_id += str[index++];
 		}
 		int class_room_id_int = atoi(class_room_id.c_str());
-		string hour;
-		while (str[index] == ' ')
-			index++;
-		while (str[index] != ':')
-		{
-			if (is_digit(str[index]) != true)
-			{
-				error_code = 1;
-				cout << "Неверные данные в файле. Ошибка." << endl;
-				return;
-			}
-			hour += str[index++];
-		}
-		index++;
-		int hour_int = atoi(hour.c_str());
-		if (!(hour_int >= 0 && hour_int < 24))
-			error_code = 2;
 
-		string minute;
-		while (str[index] == ' ')
-			index++;
-		while (str[index] != ' ')
-		{
-			if (is_digit(str[index]) != true)
-			{
-				error_code = 1;
-				cout << "Неверные данные в файле. Ошибка." << endl;
-				return;
-			}
-			minute += str[index++];
-		}
-		int minute_int = atoi(minute.c_str());
-		if (!(minute_int >= 0 && hour_int < 60))
-			error_code = 2;
-		string day;
-		while (str[index] == ' ')
-			index++;
-		while (str[index] != ':')
-		{
-			if (is_digit(str[index]) != true)
-			{
-				error_code = 1;
-				cout << "Неверные данные в файле. Ошибка." << endl;
-				return;
-			}
-			day += str[index++];
-		}
-		int day_int = atoi(day.c_str());
-
-		string month;
-		while (str[index] == ':')
-			index++;
-		while (str[index] != ':')
-		{
-			if (is_digit(str[index]) != true)
-			{
-				error_code = 1;
-				cout << "Неверные данные в файле. Ошибка." << endl;
-				return;
-			}
-			month += str[index++];
-		}
-		index++;
-		int month_int = atoi(month.c_str());
-
-		string year;
-		while (str[index] == ':')
-			index++;
+		string str_date;
 		while (index < str.size())
 		{
-			if (is_digit(str[index]) != true)
-			{
-				error_code = 1;
-				cout << "Неверные данные в файле. Ошибка." << endl;
-				return;
-			}
-			year += str[index++];
+			str_date += str[index];
+			index++;
 		}
-		int year_int = atoi(year.c_str());
+		int year_int = -1, minute_int = -1, hour_int = -1, month_int = -1, day_int = -1;
+		string year = "", minute = "", hour = "", month = "", day = "";
+		check_date(str_date, error_code, hour_int, minute_int, day_int, month_int, year_int, year, minute, hour, month, day);
+		if (error_code == 1)
+			return;
 
-		switch (month_int)
-		{
-		case 1:
-			if (!(day_int > 0 && day_int <= 31))
-				error_code = 2;
-			break;
-		case 2:
-			if ((year_int % 4 == 0 && year_int % 100 != 0) || (year_int % 400 == 0))
-				if (!(day_int > 0 && day_int <= 29))
-					error_code = 2;
-				else if (!(day_int > 0 && day_int <= 28))
-					error_code = 2;
-		case 3:
-			if (!(day_int > 0 && day_int <= 31))
-				error_code = 2;
-			break;
-		case 4:
-			if (!(day_int > 0 && day_int <= 30))
-				error_code = 2;
-			break;
-		case 5:
-			if (!(day_int > 0 && day_int <= 31))
-				error_code = 2;
-			break;
-		case 6:
-			if (!(day_int > 0 && day_int <= 30))
-				error_code = 2;
-			break;
-		case 7:
-			if (!(day_int > 0 && day_int <= 31))
-				error_code = 2;
-			break;
-		case 8:
-			if (!(day_int > 0 && day_int <= 31))
-				error_code = 2;
-			break;
-		case 9:
-			if (!(day_int > 0 && day_int <= 30))
-				error_code = 2;
-			break;
-		case 10:
-			if (!(day_int > 0 && day_int <= 31))
-				error_code = 2;
-			break;
-		case 11:
-			if (!(day_int > 0 && day_int <= 30))
-				error_code = 2;
-			break;
-		case 12:
-			if (!(day_int > 0 && day_int <= 31))
-				error_code = 2;
-			break;
-		default:
-			error_code = 2;
-			break;
-		}
+		check_date_fields(year_int, error_code, minute_int, hour_int, month_int, day_int);
 
 		if (error_code == 2)
 		{
@@ -625,6 +626,246 @@ void read_schedules(string file_name, int& error_code)
 	cout << "Файл с расписаниями - данные считаны." << endl;
 }
 
+void check_date_fields(int year_int, int& error_code, int minute_int, int hour_int, int month_int, int day_int)
+{
+	if (year_int < 0)
+		error_code = 2;
+	if (!(minute_int >= 0 && hour_int < 60))
+		error_code = 2;
+	if (!(hour_int >= 0 && hour_int < 24))
+		error_code = 2;
+	switch (month_int)
+	{
+	case 1:
+		if (!(day_int > 0 && day_int <= 31))
+			error_code = 2;
+		break;
+	case 2:
+		if ((year_int % 4 == 0 && year_int % 100 != 0) || (year_int % 400 == 0))
+			if (!(day_int > 0 && day_int <= 29))
+				error_code = 2;
+			else if (!(day_int > 0 && day_int <= 28))
+				error_code = 2;
+	case 3:
+		if (!(day_int > 0 && day_int <= 31))
+			error_code = 2;
+		break;
+	case 4:
+		if (!(day_int > 0 && day_int <= 30))
+			error_code = 2;
+		break;
+	case 5:
+		if (!(day_int > 0 && day_int <= 31))
+			error_code = 2;
+		break;
+	case 6:
+		if (!(day_int > 0 && day_int <= 30))
+			error_code = 2;
+		break;
+	case 7:
+		if (!(day_int > 0 && day_int <= 31))
+			error_code = 2;
+		break;
+	case 8:
+		if (!(day_int > 0 && day_int <= 31))
+			error_code = 2;
+		break;
+	case 9:
+		if (!(day_int > 0 && day_int <= 30))
+			error_code = 2;
+		break;
+	case 10:
+		if (!(day_int > 0 && day_int <= 31))
+			error_code = 2;
+		break;
+	case 11:
+		if (!(day_int > 0 && day_int <= 30))
+			error_code = 2;
+		break;
+	case 12:
+		if (!(day_int > 0 && day_int <= 31))
+			error_code = 2;
+		break;
+	default:
+		error_code = 2;
+		break;
+	}
+}
+
+void check_date(string str_date, int& error_code, int& hour_int, int &minute_int, int& day_int, int& month_int, int& year_int,
+	string& year, string& minute, string& hour, string& month, string& day)
+{
+	int index = 0;
+	while (str_date[index] == ' ')
+		index++;
+
+	while (str_date[index] == ' ')
+		index++;
+	while (str_date[index] != ':')
+	{
+		if (is_digit(str_date[index]) != true)
+		{
+			error_code = 1;
+			cout << "Неверные данные в вводимом значении." << endl;
+			return;
+		}
+		hour += str_date[index++];
+	}
+	index++;
+	hour_int = atoi(hour.c_str());
+
+	while (str_date[index] == ' ')
+		index++;
+	while (str_date[index] != ' ')
+	{
+		if (is_digit(str_date[index]) != true)
+		{
+			error_code = 1;
+			cout << "Неверные данные в вводимом значении." << endl;
+			return;
+		}
+		minute += str_date[index++];
+	}
+	minute_int = atoi(minute.c_str());
+	while (str_date[index] == ' ')
+		index++;
+	while (str_date[index] != ':')
+	{
+		if (is_digit(str_date[index]) != true)
+		{
+			error_code = 1;
+			cout << "Неверные данные в вводимом значении." << endl;
+			return;
+		}
+		day += str_date[index++];
+	}
+	day_int = atoi(day.c_str());
+
+	while (str_date[index] == ':')
+		index++;
+	while (str_date[index] != ':')
+	{
+		if (is_digit(str_date[index]) != true)
+		{
+			error_code = 1;
+			cout << "Неверные данные в вводимом значении." << endl;
+			return;
+		}
+		month += str_date[index++];
+	}
+	index++;
+	month_int = atoi(month.c_str());
+
+	while (str_date[index] == ':')
+		index++;
+	while (index < str_date.size())
+	{
+		if (is_digit(str_date[index]) != true)
+		{
+			error_code = 1;
+			cout << "Неверные данные в вводимом значении." << endl;
+			return;
+		}
+		year += str_date[index++];
+	}
+	year_int = atoi(year.c_str());
+	error_code = 0;
+}
+
+void write_departments(string file_name)
+{
+	fstream str;
+	str.open(file_name);
+	str.clear();
+	Department* department = begin_department;
+	if (department == nullptr)
+		return;
+	do
+	{
+		str << department->name << endl;
+		department = department->next;
+	} while (department != begin_department);
+
+	str.close();
+}
+
+void write_groups(string file_name)
+{
+	fstream str;
+	str.open(file_name);
+	str.clear();
+	Group* group = begin_group;
+	if (group == nullptr)
+		return;
+	do
+	{
+		str << group->id << ' ' << group->department_id << endl;
+		group = group->next;
+	} while (group != begin_group);
+
+	str.close();
+}
+
+void write_lecturers(string file_name)
+{
+	fstream str;
+	str.open(file_name);
+	str.clear();
+	Lecturer* lecturer = begin_lecturer;
+	if (lecturer == nullptr)
+		return;
+	do
+	{
+		str << lecturer->name << ": " << lecturer->department_id << endl;
+		lecturer = lecturer->next;
+	} while (lecturer != begin_lecturer);
+
+	str.close();
+}
+
+void write_schedules(string file_name)
+{
+	fstream str;
+	str.open(file_name);
+	str.clear();
+	Schedule* schedule = begin_schedule;
+	if (schedule == nullptr)
+		return;
+	do
+	{
+		str << schedule->subject_name << ": ";
+		str << schedule->group_id << ' ';
+		str << schedule->lecturer_id << ' ';
+		str << schedule->class_room_id << ' ';
+		str << schedule->date_of_lesson.hour << ':';
+		str << schedule->date_of_lesson.minute << ' ';
+		str << schedule->date_of_lesson.day << ':';
+		str << schedule->date_of_lesson.month << ':';
+		str	<< schedule->date_of_lesson.year << endl;
+		schedule = schedule->next;
+	} while (schedule != begin_schedule);
+
+	str.close();
+}
+
+void remove_all_schedules_by_lecturer_id(int lecturer_id)
+{
+	Schedule* removing_schedule = find_schedule_by_parameters(lecturer_id, get_schedule_lecturer_id);
+	Schedule* end_removing_schedule = removing_schedule->previous;
+	Schedule* current = begin_schedule;
+
+	if (removing_schedule == nullptr)
+		return;
+
+	do
+	{
+		while (current != end_schedule)
+		{
+
+		}
+	} while (removing_schedule != end_removing_schedule);
+}
+
 void check_file(string file_name, int& error_code)
 {
 	fstream fin(file_name);
@@ -633,12 +874,14 @@ void check_file(string file_name, int& error_code)
 		cout << "ОШИБКА!!! Файл " << file_name << " не найден!" << endl;
 		error_code = 1;
 		fin.close();
+		return;
 	}
 	if (fin.peek() == EOF) // проверка на содержание (пустоту)
 	{
 		cout << "ОШИБКА!!! Файл " << file_name << " пуст!" << endl;
 		error_code = 1;
 		fin.close();
+		return;
 	}
 	fin.close();
 	error_code = 0;

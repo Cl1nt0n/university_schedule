@@ -1,4 +1,3 @@
-#include "CircularDoublyLinkedList.h"
 #include "fstream"
 #include "iostream"
 #include "string"
@@ -87,8 +86,6 @@ struct Schedule
 		this->class_room_id = class_room_id;
 		this->id = id;
 	}
-
-	
 };
 
 //расширение видимости переменных
@@ -109,6 +106,13 @@ struct Lecturer
 		this->department_id = department_id;
 		lecturer_id++;
 		id = lecturer_id;
+	}
+
+	Lecturer(string name, int department_id, int id)
+	{
+		this->name = name;
+		this->department_id = department_id;
+		this->id = id;
 	}
 };
 
