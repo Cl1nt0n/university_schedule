@@ -27,17 +27,22 @@ int class_room_id = 0;
 
 using namespace std;
 
-Department* begin_department;
-Department* end_department;
+Department* begin_department = nullptr;
+Department* end_department = nullptr;
 
-Group* begin_group;
-Group* end_group;
+Group* begin_group = nullptr;
+Group* end_group = nullptr;
 
-Schedule* begin_schedule;
-Schedule* end_schedule;
+Schedule* begin_schedule = nullptr;
+Schedule* end_schedule = nullptr;
 
-Lecturer* begin_lecturer;
-Lecturer* end_lecturer;
+Lecturer* begin_lecturer = nullptr;
+Lecturer* end_lecturer = nullptr;
+
+const string departments_file = "Departments.txt";
+const string groups_file = "Groups.txt";
+const string lecturers_file = "Lecturers.txt";
+const string schedules_file = "Schedules.txt";
 
 void print_menu()
 {
@@ -75,21 +80,42 @@ int main()
 	int error_code1 = 0;
 	int error_code2 = 0;
 	int error_code3 = 0;
+	string subject;
+	string str_date;
+	string department_name;
+	string lecturer_name;
+	int class_room_id;
+	int date_error_code = 0;
+	int add_department_error_code = 0;
+	int add_group_error_code = 0;
+	int add_schedule_error_code = 0;
+	int add_lecturer_error_code = 0;
+	int group_id;
+	int department_id;
+	int lecturer_id;
+	int schedule_id;
+	int year_int = -1, minute_int = -1, hour_int = -1, month_int = -1, day_int = -1;
+	string year = "", minute = "", hour = "", month = "", day = "";
+	Date date;
+	Schedule* schedule = nullptr;
+	Lecturer* lecturer = nullptr;
+	Group* group = nullptr;
+	Department* department = nullptr;
 
-	check_file("Departments.txt", error_code);
-	check_file("Groups.txt", error_code1);
-	check_file("Lecturers.txt", error_code2);
-	check_file("Schedules.txt", error_code3);
+	check_file(departments_file, error_code);
+	check_file(groups_file, error_code1);
+	check_file(lecturers_file, error_code2);
+	check_file(schedules_file, error_code3);
 
 	if (error_code != 0 || error_code1 != 0 || error_code2 != 0 || error_code3 != 0)
 		return 0;
 	else
 		cout << "Файлы прошли проверку." << endl;
 
-	read_departments("Departments.txt", error_code);
-	read_groups("Groups.txt", error_code1);
-	read_lecturers("Lecturers.txt", error_code2);
-	read_schedules("Schedules.txt", error_code3);
+	read_departments(departments_file, error_code);
+	read_groups(groups_file, error_code1);
+	read_lecturers(lecturers_file, error_code2);
+	read_schedules(schedules_file, error_code3);
 	if (error_code != 0 || error_code1 != 0 || error_code2 != 0 || error_code3 != 0)
 		return 0;
 	else
@@ -107,28 +133,6 @@ int main()
 
 	while (command != 0)
 	{
-		string subject;
-		string str_date;
-		string department_name;
-		string lecturer_name;
-		int class_room_id;
-		int date_error_code = 0;
-		int add_department_error_code = 0;
-		int add_group_error_code = 0;
-		int add_schedule_error_code = 0;
-		int add_lecturer_error_code = 0;
-		int group_id;
-		int department_id;
-		int lecturer_id;
-		int schedule_id;
-		int year_int = -1, minute_int = -1, hour_int = -1, month_int = -1, day_int = -1;
-		string year = "", minute = "", hour = "", month = "", day = "";
-		Date date;
-		Schedule* schedule = nullptr;
-		Lecturer* lecturer = nullptr;
-		Group* group = nullptr;
-		Department* department = nullptr;
-
 		switch (command)
 		{
 		case 1:
@@ -166,7 +170,7 @@ int main()
 				cin.ignore(10000, '\n');
 			}
 			schedule = find_schedule_by_parameters(lecturer_id, get_schedule_lecturer_id);
-			print_schedules(schedule); 
+			print_schedules(schedule);
 			clear_list(schedule, schedule->previous);
 			print_schedules(schedule);
 			break;
@@ -327,7 +331,7 @@ int main()
 			department = find_department_by_id(department_id);
 			if (department == nullptr)
 			{
-				cout << "Кафедра не найдена." << endl; 
+				cout << "Кафедра не найдена." << endl;
 				break;
 			}
 
@@ -346,7 +350,7 @@ int main()
 			group = find_group_by_id(group_id);
 			if (group == nullptr)
 			{
-				cout << "Группа не найдена." << endl; 
+				cout << "Группа не найдена." << endl;
 				break;
 			}
 			remove_all_schedules_by_parameter(group_id, get_schedule_group_id);
@@ -383,7 +387,7 @@ int main()
 			cout << "Введите имя преподавателя:" << endl;
 			getchar();
 			getline(cin, lecturer_name);
-			
+
 			print_lecturers(find_lecturers_by_name(lecturer_name));
 			break;
 		case 19:
@@ -421,10 +425,10 @@ int main()
 		}
 	}
 
-	write_departments("Departments.txt");
-	write_groups("Groups.txt");
-	write_lecturers("Lecturers.txt");
-	write_schedules("Schedules.txt");
+	write_departments(departments_file);
+	write_groups(groups_file);
+	write_lecturers(lecturers_file);
+	write_schedules(schedules_file);
 
 	system("pause");
 	return 0;
