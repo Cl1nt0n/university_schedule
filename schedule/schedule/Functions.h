@@ -20,19 +20,31 @@
 
 //Функция считывания кафедр из файла
 void read_departments(string file_name, //имя файла
-	int& error_code);//код ошибки
+	int& error_code, 
+	Department*& begin_department, 
+	Department*& end_department);//код ошибки
 
 //Функция считывания групп из файла
 void read_groups(string file_name, //имя файла
-	int& error_code);//код ошибки
+	int& error_code,
+	Group*& begin_group,
+	Group*& end_group,
+	Department*& begin_department);//код ошибки
 
 //Функция считывания преподавателей из файла
 void read_lecturers(string file_name, //имя файла
-	int& error_code);//код ошибки
+	int& error_code,
+	Lecturer*& begin_lecturer,
+	Lecturer*& end_lecturer,
+	Department*& begin_department);//код ошибки
 
 //Функция считывания расписаний из файла
 void read_schedules(string file_name, //имя файла
-	int& error_code);//код ошибки
+	int& error_code,
+	Schedule*& begin_schedule,
+	Schedule*& end_schedule,
+	Group*& begin_group,
+	Lecturer*& begin_lecturer);//код ошибки
 
 //Функция проверки полей даты
 void check_date_fields(int year_int, //год 
@@ -48,17 +60,25 @@ void check_file(string file_name, //название файла
 
 //Функция вставки кафедры
 void insert_department(string name, //название
-	int& error_code); //код ошибки
+	int& error_code, 
+	Department*& begin_department, 
+	Department*& end_department); //код ошибки
 
 //Функция вставки преподавателя
 void insert_lecturer(string name, //имя
 	int department_id, //id кафедры
-	int& error_code); //код ошибки
+	int& error_code, //код ошибки
+	Lecturer*& begin_lecturer, 
+	Lecturer*& end_lecturer,
+	Department*& begin_department); 
 
 //Функция вставки группы
 void insert_group(int department_id, //id кафедры
 	int id, //номер группы
-	int& error_code); //код ошибки
+	int& error_code, 
+	Group*& begin_group, 
+	Group*& end_group, 
+	Department*& begin_department); //код ошибки
 
 //Функция вставки расписания
 void insert_schedule(string subject_name, //название предмета
@@ -66,38 +86,43 @@ void insert_schedule(string subject_name, //название предмета
 	int lecturer_id, //id преподавателя
 	int class_room_id, //id класса
 	int& error_code, //код ошибки
-	Date date); //дата
+	Date date, 
+	Schedule*& begin_schedule,
+	Schedule*& end_schedule,
+	Group*& begin_group, 
+	Lecturer*& begin_lecturer); //дата
 
 //Функция поиска кафедры по id
-Department* find_department_by_id(int id); //id
+Department* find_department_by_id(int id, Department*& begin_department); //id
 
 //Функция поиска кафедры по имени
-Department* find_department_by_name(string name); //название кафедры
+Department* find_department_by_name(string name, Department*& begin_department); //название кафедры
 
 //Функция поиска группы по id
-Group* find_group_by_id(int id); //id
+Group* find_group_by_id(int id, Group*& begin_group); //id
 
 //Функция поиска групп по id кафедры
-Group* find_groups_by_department_id(int department_id); //id кафедры
+Group* find_groups_by_department_id(int department_id, Group*& begin_group); //id кафедры
 
 //Функция поиска преподавателя по id
-Lecturer* find_lecturer_by_id(int id); //id
+Lecturer* find_lecturer_by_id(int id, Lecturer*& begin_lecturer); //id
 
 //Функция поиска преподавателей по имени
-Lecturer* find_lecturers_by_name(string name); //имя
+Lecturer* find_lecturers_by_name(string name, Lecturer*& begin_lecturer); //имя
 
 //Функция поиска преподавателей по id кафедры
-Lecturer* find_lecturers_by_department_id(int department_id); //id кафедры
+Lecturer* find_lecturers_by_department_id(int department_id, Lecturer*& begin_lecturer); //id кафедры
 
 //Функция поиска расписания по id
-Schedule* find_schedule_by_id(int id); //id
+Schedule* find_schedule_by_id(int id, Schedule*& begin_schedule); //id
 
 //Функция поиска расписания по дате
 Schedule* find_schedule_by_date(string hour, //час
 	string minute, //минута
 	string day, //день
 	string month, //месяц
-	string year); //год
+	string year, 
+	Schedule*& begin_schedule); //год
 
 //Функция проверки символа на цифру
 bool is_digit(char symbol); //символ
@@ -112,7 +137,7 @@ void print_groups(Group* group); //группа
 void print_lecturers(Lecturer* lecturer); //преподаватель
 
 //Функция печати расписаний
-void print_schedules(Schedule* schedule); //расписание
+void print_schedules(Schedule* schedule, Lecturer*& begin_lecturer); //расписание
 
 //Функция получения id группы рапсиания
 int get_schedule_group_id(Schedule* schedule);//расписание
@@ -141,26 +166,36 @@ void check_date(string str_date, //параметры даты
 	string& day);
 
 //Функция перезаписи файла с кафедрами
-void write_departments(string file_name);//имя файла
+void write_departments(string file_name, Department*& begin_department);//имя файла
 
 //Функция перезаписи файла с группами
-void write_groups(string file_name);//имя файла
+void write_groups(string file_name, Group*& begin_group);//имя файла
 
 //Функция перезаписи файла с преподавателями
-void write_lecturers(string file_name);//имя файла
+void write_lecturers(string file_name, Lecturer*& begin_lecturer);//имя файла
 
 //Функция перезаписи файла с рапсианиями
-void write_schedules(string file_name);//имя файла
+void write_schedules(string file_name, Schedule*& begin_schedule);//имя файла
 
 //Функция удаления всех расписаний по заданным параметрам
 void remove_all_schedules_by_parameter(int parameter, //параметр
-	int(*function)(Schedule*));//функция получения параметра расписания
+	int(*function)(Schedule*), 
+	Schedule*& begin_schedule, 
+	Schedule*& end_schedule);//функция получения параметра расписания
 
 //Функция удаления всех расписаний по id кафедры
-void remove_all_lecturers_by_department_id(int department_id);//id кафедры
+void remove_all_lecturers_by_department_id(int department_id, 
+	Lecturer*& begin_lecturer, 
+	Lecturer*& end_lecturer, 
+	Schedule*& begin_schedule, 
+	Schedule*& end_schedule);//id кафедры
 
 //Функция удаления всех групп по id кафедры
-void remove_all_groups_by_department_id(int department_id);//id кафедры
+void remove_all_groups_by_department_id(int department_id, 
+	Group*& begin_group, 
+	Group*& end_group, 
+	Schedule*& begin_schedule, 
+	Schedule*& end_schedule);//id кафедры
 
 //Функция очистки списка задданного типа
 template<typename T>
@@ -260,7 +295,7 @@ void remove_element_from_list(T*& start, //начальный элемент
 //Функция нахождения расписания по заданным параметрам
 template<typename T>
 Schedule* find_schedule_by_parameters(T parameter, //параметр
-	T(*function)(Schedule*))//функция получения поля структуры
+	T(*function)(Schedule*), Schedule*& begin_schedule, Schedule*& end_schedule)//функция получения поля структуры
 {
 	//Объявление переменных
 	Schedule* schedule = begin_schedule;

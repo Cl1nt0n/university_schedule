@@ -16,10 +16,10 @@
 *************************************************************************/
 
 //Функция вставки кафедры
-void insert_department(string name, int& error_code)
+void insert_department(string name, int& error_code, Department*& begin_department, Department*& end_department)
 {
 	//проверка на уникальность названия кафедры
-	if (find_department_by_name(name) != nullptr)
+	if (find_department_by_name(name, begin_department) != nullptr)
 	{
 		cout << "Кафедра с таким названием уже существует." << endl;
 		error_code = 1;
@@ -47,18 +47,18 @@ void insert_department(string name, int& error_code)
 }
 
 //Вставка новой группы
-void insert_group(int department_id, int id, int& error_code)
+void insert_group(int department_id, int id, int& error_code, Group*& begin_group, Group*& end_group, Department*& begin_department)
 {
 	error_code = 0;
 	//Проверка на существование кафедры, к которой привязана группа
-	if (find_department_by_id(department_id) == nullptr)
+	if (find_department_by_id(department_id, begin_department) == nullptr)
 	{
 		error_code = 1;
 		cout << "Указанной кафедры не существует." << endl << endl;
 		return;
 	}
 	//проверка на уникальность номера группы
-	if (find_group_by_id(id) != nullptr)
+	if (find_group_by_id(id, begin_group) != nullptr)
 	{
 		error_code = 2;
 		cout << "Группа с таким номером уже существует." << endl << endl;
@@ -86,17 +86,18 @@ void insert_group(int department_id, int id, int& error_code)
 }
 
 //Функция вставки нового расписания
-void insert_schedule(string subject_name, int group_id, int lecturer_id, int class_room_id, int& error_code, Date date)
+void insert_schedule(string subject_name, int group_id, int lecturer_id, int class_room_id, int& error_code, Date date, Schedule*& begin_schedule, 
+	Schedule*& end_schedule, Group*& begin_group, Lecturer*& begin_lecturer)
 {
 	//Проверка существования группы с указанным номером
-	if (find_group_by_id(group_id) == nullptr)
+	if (find_group_by_id(group_id, begin_group) == nullptr)
 	{
 		cout << "Группа не найдена." << endl;
 		error_code = 2;
 		return;
 	}
 	//Проверка существования преподавателя с указанным номером
-	if (find_lecturer_by_id(lecturer_id) == nullptr)
+	if (find_lecturer_by_id(lecturer_id, begin_lecturer) == nullptr)
 	{
 		cout << "Преподаватель не найден." << endl;
 		error_code = 2;
@@ -124,10 +125,10 @@ void insert_schedule(string subject_name, int group_id, int lecturer_id, int cla
 }
 
 //Функция вставки нового преподавателя
-void insert_lecturer(string name, int department_id, int& error_code)
+void insert_lecturer(string name, int department_id, int& error_code, Lecturer*& begin_lecturer, Lecturer*& end_lecturer, Department*& begin_department)
 {
 	//Проверка существования кафедры с указанным id
-	if (find_department_by_id(department_id) == nullptr)
+	if (find_department_by_id(department_id, begin_department) == nullptr)
 	{
 		error_code = 2;
 		return;
@@ -154,7 +155,7 @@ void insert_lecturer(string name, int department_id, int& error_code)
 }
 
 //Функция поиск кафедры по id
-Department* find_department_by_id(int id)
+Department* find_department_by_id(int id, Department*& begin_department)
 {
 	//создание указателя на начальный элемент
 	Department* department = begin_department;
@@ -177,7 +178,7 @@ Department* find_department_by_id(int id)
 }
 
 //Функция поиска группы по id
-Group* find_group_by_id(int id)
+Group* find_group_by_id(int id, Group*& begin_group)
 {
 	//создание указателя на начальный элемент
 	Group* group = begin_group;
@@ -200,7 +201,7 @@ Group* find_group_by_id(int id)
 }
 
 //Функция поиска групп по номеру кафедры
-Group* find_groups_by_department_id(int department_id)
+Group* find_groups_by_department_id(int department_id, Group*& begin_group)
 {
 	//Создание указателя на начальный элемент
 	Group* group = begin_group;
@@ -245,7 +246,7 @@ Group* find_groups_by_department_id(int department_id)
 }
 
 //Функция поиска преподавателя по id
-Lecturer* find_lecturer_by_id(int id)
+Lecturer* find_lecturer_by_id(int id, Lecturer*& begin_lecturer)
 {
 	//Создание указателя на начальный элемент
 	Lecturer* lecturer = begin_lecturer;
@@ -267,7 +268,7 @@ Lecturer* find_lecturer_by_id(int id)
 }
 
 //Функция поиска расписания по id
-Schedule* find_schedule_by_id(int id)
+Schedule* find_schedule_by_id(int id, Schedule*& begin_schedule)
 {
 	//Создание указателя на начальный элемент
 	Schedule* schedule = begin_schedule;
@@ -289,7 +290,7 @@ Schedule* find_schedule_by_id(int id)
 }
 
 //Функция поиска преподавателей по имени
-Lecturer* find_lecturers_by_name(string name)
+Lecturer* find_lecturers_by_name(string name, Lecturer*& begin_lecturer)
 {
 	//Создание указателя на начальный элемент
 	Lecturer* lecturer = begin_lecturer;
@@ -334,7 +335,7 @@ Lecturer* find_lecturers_by_name(string name)
 }
 
 //Функция поиска преподавателей по id 
-Lecturer* find_lecturers_by_department_id(int department_id)
+Lecturer* find_lecturers_by_department_id(int department_id, Lecturer*& begin_lecturer)
 {
 	//Создание указателя на первый элемент
 	Lecturer* lecturer = begin_lecturer;
@@ -379,7 +380,7 @@ Lecturer* find_lecturers_by_department_id(int department_id)
 }
 
 //Функция поиска расписания по дате
-Schedule* find_schedule_by_date(string hour, string minute, string day, string month, string year)
+Schedule* find_schedule_by_date(string hour, string minute, string day, string month, string year, Schedule*& begin_schedule)
 {
 	//указатель на первый элемент
 	Schedule* schedule = begin_schedule;
@@ -432,7 +433,7 @@ Schedule* find_schedule_by_date(string hour, string minute, string day, string m
 }
 
 //Функция поиска кафедры по имени
-Department* find_department_by_name(string name)
+Department* find_department_by_name(string name, Department*& begin_department)
 {
 	//создание уаказателя на первый элемент
 	Department* department = begin_department;
@@ -454,7 +455,7 @@ Department* find_department_by_name(string name)
 }
 
 //Функция считывания кафедр из файла
-void read_departments(string file_name, int& error_code)
+void read_departments(string file_name, int& error_code, Department*& begin_department, Department*& end_department)
 {
 	//открытие файла
 	ifstream stream(file_name);
@@ -471,7 +472,7 @@ void read_departments(string file_name, int& error_code)
 		}
 
 		//Вставка кафедры
-		insert_department(str, error_code);
+		insert_department(str, error_code, begin_department, end_department);
 		//проверка на успешность вставки
 		if (error_code == 1)
 			return;
@@ -481,7 +482,7 @@ void read_departments(string file_name, int& error_code)
 }
 
 //Функция считывания групп из файла
-void read_groups(string file_name, int& error_code)
+void read_groups(string file_name, int& error_code, Group*& begin_group, Group*& end_group, Department*& begin_department)
 {
 	//открытие файла
 	ifstream stream(file_name);
@@ -523,7 +524,7 @@ void read_groups(string file_name, int& error_code)
 		int department_id = atoi(number.c_str());
 
 		//вставка группы
-		insert_group(department_id, id, error_code);
+		insert_group(department_id, id, error_code, begin_group, end_group, begin_department);
 		//проверка кода ошибки
 		if (error_code == 1 || error_code == 2)
 			return;
@@ -558,7 +559,7 @@ void print_departments(Department* department)
 		cout << "Id кафедры: " << department->id << endl;
 		cout << "Название кафедры: " << department->name << endl << endl;
 		department = department->next;
-	} while (department != begin_department);
+	} while (department != start);
 }
 
 //Функция печати групп
@@ -605,7 +606,7 @@ void print_lecturers(Lecturer* lecturer)
 }
 
 //Функция печати расписаний
-void print_schedules(Schedule* schedule)
+void print_schedules(Schedule* schedule, Lecturer*& begin_lecturer)
 {
 	//указатель на входной элемент
 	Schedule* start = schedule;
@@ -623,7 +624,7 @@ void print_schedules(Schedule* schedule)
 		cout << "Id расписания: " << schedule->id << endl;
 		cout << "Предмет: " << schedule->subject_name << endl;
 		cout << "Id группы: " << schedule->group_id << endl;
-		cout << "Имя преподавателя: " << find_lecturer_by_id(schedule->lecturer_id)->name << endl;
+		cout << "Имя преподавателя: " << find_lecturer_by_id(schedule->lecturer_id, begin_lecturer)->name << endl;
 		cout << "Id аудитории: " << schedule->class_room_id << endl;
 		cout << "Дата проведения: " << schedule->date_of_lesson.hour << ':'
 			<< schedule->date_of_lesson.minute << ' '
@@ -637,18 +638,27 @@ void print_schedules(Schedule* schedule)
 //Функция получения id группы рапсисания
 int get_schedule_group_id(Schedule* schedule)
 {
+	if (schedule != nullptr)
+		return -1;
+
 	return schedule->group_id;
 }
 
 //Функция получения id преподавателя рапсисания
 int get_schedule_lecturer_id(Schedule* schedule)
 {
+	if (schedule != nullptr)
+		return -1;
+
 	return schedule->lecturer_id;
 }
 
 //Функция получения id класса рапсисания
 int get_schedule_class_room_id(Schedule* schedule)
 {
+	if (schedule != nullptr)
+		return -1;
+
 	return schedule->class_room_id;
 }
 
@@ -659,7 +669,7 @@ string get_schedule_subject_name(Schedule* schedule)
 }
 
 //Функция считывания преподавателей из файла
-void read_lecturers(string file_name, int& error_code)
+void read_lecturers(string file_name, int& error_code, Lecturer*& begin_lecturer, Lecturer*& end_lecturer, Department*& begin_department)
 {
 	//открытие файла
 	ifstream stream(file_name);
@@ -691,7 +701,7 @@ void read_lecturers(string file_name, int& error_code)
 		}
 		int department_id = atoi(number.c_str());
 		//вставка преподавателя
-		insert_lecturer(full_name, department_id, error_code);
+		insert_lecturer(full_name, department_id, error_code, begin_lecturer, end_lecturer, begin_department);
 
 		//проерка успешности вставки
 		if (error_code == 1)
@@ -702,7 +712,7 @@ void read_lecturers(string file_name, int& error_code)
 }
 
 //Функция считывания расписаний
-void read_schedules(string file_name, int& error_code)
+void read_schedules(string file_name, int& error_code, Schedule*& begin_schedule, Schedule*& end_schedule, Group*& begin_group, Lecturer*& begin_lecturer)
 {
 	//открытие фалйа
 	ifstream stream(file_name);
@@ -804,7 +814,7 @@ void read_schedules(string file_name, int& error_code)
 		date.year = year;
 
 		//вставка расписания
-		insert_schedule(subject, group_id_int, lecturer_id_int, class_room_id_int, error_code, date);
+		insert_schedule(subject, group_id_int, lecturer_id_int, class_room_id_int, error_code, date, begin_schedule, end_schedule, begin_group, begin_lecturer);
 	}
 	error_code = 0;
 	cout << "Файл с расписаниями - данные считаны." << endl;
@@ -969,7 +979,7 @@ void check_date(string str_date, int& error_code, int& hour_int, int& minute_int
 }
 
 //Функция перезаписи кафедр в файл
-void write_departments(string file_name)
+void write_departments(string file_name, Department*& begin_department)
 {
 	//открытие файла
 	fstream str;
@@ -996,7 +1006,7 @@ void write_departments(string file_name)
 
 
 //Функция перезаписи групп в файл
-void write_groups(string file_name)
+void write_groups(string file_name, Group*& begin_group)
 {
 	//открытие файла
 	fstream str;
@@ -1021,7 +1031,7 @@ void write_groups(string file_name)
 }
 
 //Функция перезаписи преподавателей в файл
-void write_lecturers(string file_name)
+void write_lecturers(string file_name, Lecturer*& begin_lecturer)
 {
 	//открытие файла
 	fstream str;
@@ -1047,7 +1057,7 @@ void write_lecturers(string file_name)
 }
 
 //Функция перезаписи расписаний в файл
-void write_schedules(string file_name)
+void write_schedules(string file_name, Schedule*& begin_schedule)
 {
 	//открытие файла
 	fstream str;
@@ -1081,7 +1091,7 @@ void write_schedules(string file_name)
 }
 
 //Функция удаления расписания по заданному парметру
-void remove_all_schedules_by_parameter(int parameter, int(*function)(Schedule*))
+void remove_all_schedules_by_parameter(int parameter, int(*function)(Schedule*), Schedule*& begin_schedule, Schedule*& end_schedule)
 {
 	//Создание указателя на начальный элемент
 	Schedule* schedule = begin_schedule;
@@ -1099,19 +1109,21 @@ void remove_all_schedules_by_parameter(int parameter, int(*function)(Schedule*))
 		int id = function(schedule);
 		int schedule_id = schedule->id;
 		//сравнение текущих параметров с входными
-		if (id == parameter)
+		while (id == parameter)
 		{
 			schedule = schedule->next;
 			//удаление
 			remove_element_from_list(begin_schedule, end_schedule, schedule_id);
-			continue;
+
+			id = function(schedule);
+			schedule_id = schedule->id;
 		}
 		schedule = schedule->next;
 	}while (schedule != begin_schedule);
 }
 
 //Функция удаления преподавателей по id кафедры
-void remove_all_lecturers_by_department_id(int department_id)
+void remove_all_lecturers_by_department_id(int department_id, Lecturer*& begin_lecturer, Lecturer*& end_lecturer, Schedule*& begin_schedule, Schedule*& end_schedule)
 {
 	//создание указателя на начальный элемент
 	Lecturer* lecturer = begin_lecturer;
@@ -1132,21 +1144,22 @@ void remove_all_lecturers_by_department_id(int department_id)
 		id = lecturer->department_id;
 		lecturer_id = lecturer->id;
 		//если id кафедры текущего преподавателя равен входному
-		if (id == department_id)
+		while (id == department_id)
 		{
 			lecturer = lecturer->next;
 			//удаление
-			remove_all_schedules_by_parameter(lecturer_id, get_schedule_lecturer_id);
+			remove_all_schedules_by_parameter(lecturer_id, get_schedule_lecturer_id, begin_schedule, end_schedule);
 			remove_element_from_list(begin_lecturer, end_lecturer, lecturer_id);
 
-			continue;
+			id = lecturer->department_id;
+			lecturer_id = lecturer->id;
 		}
 		lecturer = lecturer->next;
 	} while (lecturer != begin_lecturer);
 }
 
 //Удаление всех групп по id кафедры
-void remove_all_groups_by_department_id(int department_id)
+void remove_all_groups_by_department_id(int department_id, Group*& begin_group, Group*& end_group, Schedule*& begin_schedule, Schedule*& end_schedule)
 {
 	//создание указателя на начальный элемент
 	Group* group = begin_group;
@@ -1163,14 +1176,17 @@ void remove_all_groups_by_department_id(int department_id)
 	{
 		int id = group->department_id;
 		int group_id = group->id;
+
 		//если id кафедры текущей группы равен входному
-		if (id == department_id)
+		while (id == department_id)
 		{
 			group = group->next;
 			//удаление
-			remove_all_schedules_by_parameter(group_id, get_schedule_group_id);
+			remove_all_schedules_by_parameter(group_id, get_schedule_group_id, begin_schedule, end_schedule);
 			remove_element_from_list(begin_group, end_group, group_id);
-			continue;
+			
+			id = group->department_id;
+			group_id = group->id;
 		}
 		group = group->next;
 	} while (group != begin_group);

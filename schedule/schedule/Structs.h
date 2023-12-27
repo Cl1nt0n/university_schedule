@@ -43,10 +43,6 @@ struct Department
 	}
 };
 
-//расширение видимости переменных
-extern Department* begin_department;//первый элемент
-extern Department* end_department;  //конечный элемент
-
 //Структура группа
 struct Group
 {
@@ -62,10 +58,6 @@ struct Group
 		this->department_id = department_id;
 	}
 };
-
-//расширение видимости переменных
-extern Group* begin_group;//первый элемент
-extern Group* end_group;  //конечный элемент
 
 //струтктура дата
 struct Date
@@ -113,10 +105,6 @@ struct Schedule
 	}
 };
 
-//расширение видимости переменных
-extern Schedule* begin_schedule;//первый элемент
-extern Schedule* end_schedule;	//конечный элемент
-
 //структура преподавателя
 struct Lecturer
 {
@@ -144,7 +132,18 @@ struct Lecturer
 	}
 };
 
-//расширение видимости переменных
-extern Lecturer* begin_lecturer;//первый элемент
-extern Lecturer* end_lecturer;	//конечный элемент
+//struct Subject
+//{
+//	int id;
+//	string name;
+//	Subject* next;
+//	Subject* previous;
+//
+//	Subject(string name)
+//	{
+//		this->name = name;
+//		subject_id++;
+//		id = subject_id;
+//	}
+//};
 

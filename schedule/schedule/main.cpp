@@ -24,20 +24,21 @@ int department_id = 0;
 int schedule_id = 0;
 int lecturer_id = 0;
 int class_room_id = 0;
+int subject_id = 0;
 
 using namespace std;
 
-Department* begin_department = nullptr;
-Department* end_department = nullptr;
+Department* b_department = nullptr;
+Department* e_department = nullptr;
 
-Group* begin_group = nullptr;
-Group* end_group = nullptr;
+Group* b_group = nullptr;
+Group* e_group = nullptr;
 
-Schedule* begin_schedule = nullptr;
-Schedule* end_schedule = nullptr;
+Schedule* b_schedule = nullptr;
+Schedule* e_schedule = nullptr;
 
-Lecturer* begin_lecturer = nullptr;
-Lecturer* end_lecturer = nullptr;
+Lecturer* b_lecturer = nullptr;
+Lecturer* e_lecturer = nullptr;
 
 const string departments_file = "Departments.txt";
 const string groups_file = "Groups.txt";
@@ -112,10 +113,10 @@ int main()
 	else
 		cout << "Файлы прошли проверку." << endl;
 
-	read_departments(departments_file, error_code);
-	read_groups(groups_file, error_code1);
-	read_lecturers(lecturers_file, error_code2);
-	read_schedules(schedules_file, error_code3);
+	read_departments(departments_file, error_code, b_department, e_department);
+	read_groups(groups_file, error_code1, b_group, e_group, b_department);
+	read_lecturers(lecturers_file, error_code2, b_lecturer, e_lecturer, b_department);
+	read_schedules(schedules_file, error_code3, b_schedule, e_schedule, b_group, b_lecturer);
 	if (error_code != 0 || error_code1 != 0 || error_code2 != 0 || error_code3 != 0)
 		return 0;
 	else
@@ -136,16 +137,16 @@ int main()
 		switch (command)
 		{
 		case 1:
-			print_departments(begin_department);
+			print_departments(b_department);
 			break;
 		case 2:
-			print_groups(begin_group);
+			print_groups(b_group);
 			break;
 		case 3:
-			print_lecturers(begin_lecturer);
+			print_lecturers(b_lecturer);
 			break;
 		case 4:
-			print_schedules(begin_schedule);
+			print_schedules(b_schedule, b_lecturer);
 			break;
 		case 5:
 			cout << "Введите номер аудитории:" << endl;
@@ -156,10 +157,10 @@ int main()
 				cin.ignore(10000, '\n');
 			}
 
-			schedule = find_schedule_by_parameters(class_room_id, get_schedule_class_room_id);
-			print_schedules(schedule);
+			schedule = find_schedule_by_parameters(class_room_id, get_schedule_class_room_id, b_schedule, e_schedule);
+			print_schedules(schedule, b_lecturer);
 			clear_list(schedule, schedule->previous);
-			print_schedules(schedule);
+			print_schedules(schedule, b_lecturer);
 			break;
 		case 6:
 			cout << "Введите id преподавателя:" << endl;
@@ -169,10 +170,10 @@ int main()
 				cin.clear();
 				cin.ignore(10000, '\n');
 			}
-			schedule = find_schedule_by_parameters(lecturer_id, get_schedule_lecturer_id);
-			print_schedules(schedule);
+			schedule = find_schedule_by_parameters(lecturer_id, get_schedule_lecturer_id, b_schedule, e_schedule);
+			print_schedules(schedule, b_lecturer);
 			clear_list(schedule, schedule->previous);
-			print_schedules(schedule);
+			print_schedules(schedule, b_lecturer);
 			break;
 		case 7:
 			cout << "Введите номер группы:" << endl;
@@ -182,19 +183,19 @@ int main()
 				cin.clear();
 				cin.ignore(10000, '\n');
 			}
-			schedule = find_schedule_by_parameters(group_id, get_schedule_group_id);
-			print_schedules(schedule);
+			schedule = find_schedule_by_parameters(group_id, get_schedule_group_id, b_schedule, e_schedule);
+			print_schedules(schedule, b_lecturer);
 			clear_list(schedule, schedule->previous);
-			print_schedules(schedule);
+			print_schedules(schedule, b_lecturer);
 			break;
 		case 8:
 			cout << "Введите название предмета:" << endl;
 			getchar();
 			getline(cin, subject);
-			schedule = find_schedule_by_parameters(subject, get_schedule_subject_name);
-			print_schedules(schedule);
+			schedule = find_schedule_by_parameters(subject, get_schedule_subject_name, b_schedule, e_schedule);
+			print_schedules(schedule, b_lecturer);
 			clear_list(schedule, schedule->previous);
-			print_schedules(schedule);
+			print_schedules(schedule, b_lecturer);
 			break;
 		case 9:
 			cout << "Введите дату в формате xx:xx xx:xx:xx:" << endl;
@@ -212,17 +213,17 @@ int main()
 				cout << "Ошибка в формате даты." << endl;
 				break;
 			}
-			schedule = find_schedule_by_date(hour, minute, day, month, year);
-			print_schedules(schedule);
+			schedule = find_schedule_by_date(hour, minute, day, month, year, b_schedule);
+			print_schedules(schedule, b_lecturer);
 			clear_list(schedule, schedule->previous);
-			print_schedules(schedule);
+			print_schedules(schedule, b_lecturer);
 			break;
 		case 10:
 			cout << "Введите название кафедры." << endl;
 			getchar();
 			getline(cin, department_name);
 
-			insert_department(department_name, add_department_error_code);
+			insert_department(department_name, add_department_error_code, b_department, e_department);
 			if (add_department_error_code != 0)
 				cout << "Ошибка при добавлении кафедры." << endl;
 			else
@@ -243,7 +244,7 @@ int main()
 				cin.clear();
 				cin.ignore(10000, '\n');
 			}
-			insert_group(department_id, group_id, add_group_error_code);
+			insert_group(department_id, group_id, add_group_error_code, b_group, e_group, b_department);
 			if (add_group_error_code != 0)
 				cout << "Ошибка при добавлении группы." << endl;
 			else
@@ -296,7 +297,7 @@ int main()
 			date.month = month;
 			date.year = year;
 
-			insert_schedule(subject, group_id, lecturer_id, class_room_id, add_schedule_error_code, date);
+			insert_schedule(subject, group_id, lecturer_id, class_room_id, add_schedule_error_code, date, b_schedule, e_schedule, b_group, b_lecturer);
 			if (add_schedule_error_code != 0)
 				cout << "Ошибка при добавлении расписания." << endl;
 			else
@@ -313,7 +314,7 @@ int main()
 				cin.clear();
 				cin.ignore(10000, '\n');
 			}
-			insert_lecturer(lecturer_name, department_id, add_lecturer_error_code);
+			insert_lecturer(lecturer_name, department_id, add_lecturer_error_code, b_lecturer, e_lecturer, b_department);
 			if (add_lecturer_error_code != 0)
 				cout << "Ошибка при добавлении преподавателя." << endl;
 			else
@@ -328,16 +329,16 @@ int main()
 				cin.ignore(10000, '\n');
 			}
 
-			department = find_department_by_id(department_id);
+			department = find_department_by_id(department_id, b_department);
 			if (department == nullptr)
 			{
 				cout << "Кафедра не найдена." << endl;
 				break;
 			}
 
-			remove_all_groups_by_department_id(department_id);
-			remove_all_lecturers_by_department_id(department_id);
-			remove_element_from_list(begin_department, end_department, department_id);
+			remove_all_groups_by_department_id(department_id, b_group, e_group, b_schedule, e_schedule);
+			remove_all_lecturers_by_department_id(department_id, b_lecturer, e_lecturer, b_schedule, e_schedule);
+			remove_element_from_list(b_department, e_department, department_id);
 			break;
 		case 15:
 			cout << "Введите номер группы:" << endl;
@@ -347,14 +348,14 @@ int main()
 				cin.clear();
 				cin.ignore(10000, '\n');
 			}
-			group = find_group_by_id(group_id);
+			group = find_group_by_id(group_id, b_group);
 			if (group == nullptr)
 			{
 				cout << "Группа не найдена." << endl;
 				break;
 			}
-			remove_all_schedules_by_parameter(group_id, get_schedule_group_id);
-			remove_element_from_list(begin_group, end_group, group_id);
+			remove_all_schedules_by_parameter(group_id, get_schedule_group_id, b_schedule, e_schedule);
+			remove_element_from_list(b_group, e_group, group_id);
 			break;
 		case 16:
 			cout << "Введите id преподавателя:" << endl;
@@ -364,14 +365,14 @@ int main()
 				cin.clear();
 				cin.ignore(10000, '\n');
 			}
-			lecturer = find_lecturer_by_id(lecturer_id);
+			lecturer = find_lecturer_by_id(lecturer_id, b_lecturer);
 			if (lecturer == nullptr)
 			{
 				cout << "Преподаватель не найден." << endl;
 				break;
 			}
-			remove_all_schedules_by_parameter(lecturer_id, get_schedule_lecturer_id);
-			remove_element_from_list(begin_lecturer, end_lecturer, lecturer_id);
+			remove_all_schedules_by_parameter(lecturer_id, get_schedule_lecturer_id, b_schedule, e_schedule);
+			remove_element_from_list(b_lecturer, e_lecturer, lecturer_id);
 			break;
 		case 17:
 			cout << "Введите id расписания:" << endl;
@@ -381,14 +382,15 @@ int main()
 				cin.clear();
 				cin.ignore(10000, '\n');
 			}
-			remove_element_from_list(begin_schedule, end_schedule, schedule_id);
+			remove_element_from_list(b_schedule, e_schedule, schedule_id);
 			break;
 		case 18:
 			cout << "Введите имя преподавателя:" << endl;
 			getchar();
 			getline(cin, lecturer_name);
-
-			print_lecturers(find_lecturers_by_name(lecturer_name));
+			lecturer = find_lecturers_by_name(lecturer_name, b_lecturer);
+			print_lecturers(lecturer);
+			clear_list(lecturer, lecturer->previous);
 			break;
 		case 19:
 			cout << "Введите id кафедры:" << endl;
@@ -398,7 +400,9 @@ int main()
 				cin.clear();
 				cin.ignore(10000, '\n');
 			}
-			print_lecturers(find_lecturers_by_department_id(department_id));
+			lecturer = find_lecturers_by_department_id(department_id, b_lecturer);
+			print_lecturers(lecturer);
+			clear_list(lecturer, lecturer->previous);
 			break;
 		case 20:
 			cout << "Введите id кафедры:" << endl;
@@ -408,7 +412,9 @@ int main()
 				cin.clear();
 				cin.ignore(10000, '\n');
 			}
-			print_groups(find_groups_by_department_id(department_id));
+			group = find_groups_by_department_id(department_id, b_group);
+			print_groups(group);
+			clear_list(group, group->previous);
 			break;
 		default:
 			cout << "Неизвестная команада." << endl;
@@ -425,10 +431,10 @@ int main()
 		}
 	}
 
-	write_departments(departments_file);
-	write_groups(groups_file);
-	write_lecturers(lecturers_file);
-	write_schedules(schedules_file);
+	write_departments(departments_file, b_department);
+	write_groups(groups_file, b_group);
+	write_lecturers(lecturers_file, b_lecturer);
+	write_schedules(schedules_file, b_schedule);
 
 	system("pause");
 	return 0;
