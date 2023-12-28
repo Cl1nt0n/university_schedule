@@ -89,7 +89,7 @@ void insert_group(int department_id, int id, int& error_code, Group*& begin_grou
 
 //Функция вставки нового расписания
 void insert_schedule(Subject* subject, int group_id, int lecturer_id, int class_room_id, int& error_code, Date date, Schedule*& begin_schedule, 
-	Schedule*& end_schedule, Group*& begin_group, Lecturer*& begin_lecturer, Subject*& begin_subject)
+	Schedule*& end_schedule, Group*& begin_group, Lecturer*& begin_lecturer, Subject*& begin_subject, ClassRoom*& begin_class_room)
 {
 	//Проверка существования группы с указанным номером
 	if (find_group_by_id(group_id, begin_group) == nullptr)
@@ -108,6 +108,12 @@ void insert_schedule(Subject* subject, int group_id, int lecturer_id, int class_
 	if (subject == nullptr)
 	{
 		cout << "Предмет не найден." << endl;
+		error_code = 2;
+		return;
+	}
+	if (find_class_room_by_id(class_room_id, begin_class_room) == nullptr)
+	{
+		cout << "Аудитория не найдена." << endl;
 		error_code = 2;
 		return;
 	}
@@ -163,6 +169,36 @@ void insert_subject(string name, int& error_code, Subject*& begin_subject, Subje
 		end_subject = subject;
 		subject->next = begin_subject;
 		begin_subject->previous = end_subject;
+	}
+	error_code = 0;
+}
+
+void insert_class_room(int id, int& error_code, ClassRoom*& begin_class_room, ClassRoom*& end_class_room)
+{
+	//проверка на уникальность названия кафедры
+	if (find_class_room_by_id(id, begin_class_room) != nullptr)
+	{
+		cout << "Аудитория с таким названием уже существует." << endl;
+		error_code = 1;
+		return;
+	}
+	//создание новой кафедры
+	ClassRoom* class_room = new ClassRoom(id);
+	//добавление
+	if (begin_class_room == nullptr)
+	{
+		begin_class_room = class_room;
+		end_class_room = class_room;
+		begin_class_room->next = class_room;
+		begin_class_room->previous = class_room;
+	}
+	else
+	{
+		end_class_room->next = class_room;
+		class_room->previous = end_class_room;
+		end_class_room = class_room;
+		class_room->next = begin_class_room;
+		begin_class_room->previous = end_class_room;
 	}
 	error_code = 0;
 }
@@ -538,6 +574,28 @@ Subject* find_subject_by_id(int id, Subject*& begin_subject)
 
 		subject = subject->next;
 	} while (subject != begin_subject);
+
+	return nullptr;
+}
+
+ClassRoom* find_class_room_by_id(int class_room_id, ClassRoom*& begin_class_room)
+{
+	//создание указателя на начальный элемент
+	ClassRoom* class_room = begin_class_room;
+
+	//Проверка на пустоту списка
+	if (class_room == nullptr)
+		return nullptr;
+
+	//цикл поиска
+	do
+	{
+		//сравнение id кафедры с искомым id
+		if (class_room->id == class_room_id)
+			return class_room;
+
+		class_room = class_room->next;
+	} while (class_room != begin_class_room);
 
 	return nullptr;
 }
@@ -978,6 +1036,48 @@ void print_subjects(Subject* subject)
 	setlocale(0, "ru");
 }
 
+void print_class_rooms(ClassRoom* class_room)
+{
+	//создание указателя на входной элемент
+	ClassRoom* start = class_room;
+	//проверка на путсоту списка
+	if (class_room == nullptr)
+	{
+		cout << "Список аудиторий пуст." << endl;
+		return;
+	}
+
+	//цикл вывода
+	setlocale(0, "C");
+	cout << TopLeftCorner << setfill(HorizontalLine)
+		<< setw(20) << TopRightCorner << "\n";
+	cout << VerticalLine << setfill(Space)
+		<< setw(19);
+
+	setlocale(LC_ALL, "ru");
+	cout << "Номер аудитории";
+	setlocale(0, "C");
+
+	cout << VerticalLine << "\n";
+
+	do
+	{
+		cout << RightJunction << setfill(HorizontalLine) << setw(20) << LeftJunction << "\n"
+			<< VerticalLine << setfill(Space) << setw(19);
+
+		setlocale(LC_ALL, "ru");
+		cout << class_room->id;
+		setlocale(0, "C");
+
+		cout << VerticalLine << "\n";
+		class_room = class_room->next;
+	} while (class_room != start);
+
+	cout << BottomLeftCorner << setfill(HorizontalLine)
+		<< setw(20) << BottomRightCorner << "\n";
+	setlocale(0, "ru");
+}
+
 //Функция получения id группы рапсисания
 int get_schedule_group_id(Schedule* schedule)
 {
@@ -1055,7 +1155,7 @@ void read_lecturers(string file_name, int& error_code, Lecturer*& begin_lecturer
 }
 
 //Функция считывания расписаний
-void read_schedules(string file_name, int& error_code, Schedule*& begin_schedule, Schedule*& end_schedule, Group*& begin_group, Lecturer*& begin_lecturer, Subject* begin_subject)
+void read_schedules(string file_name, int& error_code, Schedule*& begin_schedule, Schedule*& end_schedule, Group*& begin_group, Lecturer*& begin_lecturer, Subject* begin_subject, ClassRoom*& begin_class_room)
 {
 	//открытие фалйа
 	ifstream stream(file_name);
@@ -1169,7 +1269,7 @@ void read_schedules(string file_name, int& error_code, Schedule*& begin_schedule
 		date.year = year;
 
 		//вставка расписания
-		insert_schedule(find_subject_by_id(subject_id_int, begin_subject), group_id_int, lecturer_id_int, class_room_id_int, error_code, date, begin_schedule, end_schedule, begin_group, begin_lecturer, begin_subject);
+		insert_schedule(find_subject_by_id(subject_id_int, begin_subject), group_id_int, lecturer_id_int, class_room_id_int, error_code, date, begin_schedule, end_schedule, begin_group, begin_lecturer, begin_subject, begin_class_room);
 	}
 	error_code = 0;
 	cout << "Файл с расписаниями - данные считаны." << endl;
@@ -1191,7 +1291,7 @@ void read_subjects(string file_name, int& error_code, Subject*& begin_subject, S
 			return;
 		}
 
-		//Вставка кафедры
+		//Вставка предмета
 		insert_subject(str, error_code, begin_subject, end_subject);
 		//проверка на успешность вставки
 		if (error_code == 1)
@@ -1201,7 +1301,7 @@ void read_subjects(string file_name, int& error_code, Subject*& begin_subject, S
 	cout << "Файл с предметами - данные считаны." << endl;
 }
 
-void read_subjects(string file_name, int& error_code, Subject* begin_subject, Subject* end_subject)
+void read_class_rooms(string file_name, int& error_code, ClassRoom*& begin_class_room, ClassRoom*& end_class_room)
 {
 	//открытие файла
 	ifstream stream(file_name);
@@ -1210,22 +1310,32 @@ void read_subjects(string file_name, int& error_code, Subject* begin_subject, Su
 	//построчное считывание
 	while (getline(stream, str))
 	{
-		//проверяем каждый символ на конец строки
-		if (str[0] == '\n')
+		int index = 0;
+		string class_room_id;
+		//проверка каждого символа
+		while (str[index] == ' ')
+			index++;
+		while (index < str.size())
 		{
-			error_code = 1;
-			return;
+			//проверка каждого символа на цифру
+			if (is_digit(str[index]) != true)
+			{
+				error_code = 1;
+				cout << "Неверные данные в файле. Ошибка." << endl;
+				return;
+			}
+			class_room_id += str[index++];
 		}
 
+		int class_room_id_int = atoi(str.c_str());
 		//Вставка кафедры
-		insert_subject(str, error_code, begin_subject, end_subject);
-
+		insert_class_room(class_room_id_int, error_code, begin_class_room, end_class_room);
 		//проверка на успешность вставки
 		if (error_code == 1)
 			return;
 	}
 	error_code = 0;
-	cout << "Файл с предметами - данные считаны." << endl;
+	cout << "Файл с аудиториями - данные считаны." << endl;
 }
 
 //Функция проверки значений даты
@@ -1483,7 +1593,7 @@ void write_schedules(string file_name, Schedule*& begin_schedule)
 	do
 	{
 		//вставкка
-		str << schedule->subject_id << ": ";
+		str << schedule->subject_id << ' ';
 		str << schedule->group_id << ' ';
 		str << schedule->lecturer_id << ' ';
 		str << schedule->class_room_id << ' ';
@@ -1494,6 +1604,56 @@ void write_schedules(string file_name, Schedule*& begin_schedule)
 		str << schedule->date_of_lesson.year << endl;
 		schedule = schedule->next;
 	} while (schedule != begin_schedule);
+
+	str.close();
+}
+
+void write_subjects(string file_name, Subject* begin_subject)
+{
+	//открытие файла
+	fstream str;
+	str.open(file_name);
+	//очистка файла
+	str.clear();
+	//Создание указателя на началный элмент
+	Subject* subject = begin_subject;
+
+	//проерка на пустоту списка
+	if (subject == nullptr)
+		return;
+
+	//цикл вставки
+	do
+	{
+		//вставкка
+		str << subject->name << endl;
+		subject = subject->next;
+	} while (subject != begin_subject);
+
+	str.close();
+}
+
+void write_class_rooms(string file_name, ClassRoom* begin_class_room)
+{
+	//открытие файла
+	fstream str;
+	str.open(file_name);
+	//очистка файла
+	str.clear();
+	//Создание указателя на началный элмент
+	ClassRoom* class_room = begin_class_room;
+
+	//проерка на пустоту списка
+	if (class_room == nullptr)
+		return;
+
+	//цикл вставки
+	do
+	{
+		//вставкка
+		str << class_room->id << endl;
+		class_room = class_room->next;
+	} while (class_room != begin_class_room);
 
 	str.close();
 }

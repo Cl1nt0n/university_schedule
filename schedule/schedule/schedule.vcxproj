@@ -135,6 +135,7 @@
     <ClInclude Include="Structs.h" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="ClassRooms.txt" />
     <Text Include="Departments.txt" />
     <Text Include="Groups.txt" />
     <Text Include="Lecturers.txt" />

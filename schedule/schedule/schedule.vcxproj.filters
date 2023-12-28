@@ -46,5 +46,8 @@
     <Text Include="Subjects.txt">
       <Filter>Файлы ресурсов</Filter>
     </Text>
+    <Text Include="ClassRooms.txt">
+      <Filter>Файлы ресурсов</Filter>
+    </Text>
   </ItemGroup>
 </Project>

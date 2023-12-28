@@ -36,16 +36,16 @@ const char Space = (char)32;//Пробел
 
 //Функция считывания кафедр из файла
 void read_departments(string file_name, //имя файла
-	int& error_code, 
+	int& error_code, //код ошибки
 	Department*& begin_department, 
-	Department*& end_department);//код ошибки
+	Department*& end_department);
 
 //Функция считывания групп из файла
 void read_groups(string file_name, //имя файла
-	int& error_code,
+	int& error_code, //код ошибки
 	Group*& begin_group,
 	Group*& end_group,
-	Department*& begin_department);//код ошибки
+	Department*& begin_department);
 
 //Функция считывания преподавателей из файла
 void read_lecturers(string file_name, //имя файла
@@ -61,9 +61,12 @@ void read_schedules(string file_name, //имя файла
 	Schedule*& end_schedule,
 	Group*& begin_group,
 	Lecturer*& begin_lecturer,
-	Subject* begin_subject);//код ошибки
+	Subject* begin_subject,
+	ClassRoom*& begin_class_room);//код ошибки
 
 void read_subjects(string file_name, int& error_code, Subject*& begin_subject, Subject*& end_subject);
+
+void read_class_rooms(string file_name, int& error_code, ClassRoom*& begin_class_room, ClassRoom*& end_class_room);
 
 //Функция проверки полей даты
 void check_date_fields(int year_int, //год 
@@ -110,9 +113,12 @@ void insert_schedule(Subject* subject, //название предмета
 	Schedule*& end_schedule,
 	Group*& begin_group, 
 	Lecturer*& begin_lecturer, 
-	Subject*& begin_subject); //дата
+	Subject*& begin_subject,
+	ClassRoom*& begin_class_room); //дата
 
-void insert_subject(string name, int& error_code, Subject*& begin_department, Subject*& end_department);
+void insert_subject(string name, int& error_code, Subject*& begin_subject, Subject*& end_subject);
+
+void insert_class_room(int id, int& error_code, ClassRoom*& begin_class_room, ClassRoom*& end_class_room);
 
 //Функция поиска кафедры по id
 Department* find_department_by_id(int id, Department*& begin_department); //id
@@ -123,6 +129,8 @@ Department* find_department_by_name(string name, Department*& begin_department);
 Subject* find_subject_by_name(string name, Subject*& begin_subject);
 
 Subject* find_subject_by_id(int subject_id, Subject*& begin_subject);
+
+ClassRoom* find_class_room_by_id(int class_room_id, ClassRoom*& begin_class_room);
 
 //Функция поиска группы по id
 Group* find_group_by_id(int id, Group*& begin_group); //id
@@ -167,6 +175,8 @@ void print_schedules(Schedule* schedule, Lecturer*& begin_lecturer, Subject* beg
 
 void print_subjects(Subject* subject);
 
+void print_class_rooms(ClassRoom* class_room);
+
 //Функция получения id группы рапсиания
 int get_schedule_group_id(Schedule* schedule);//расписание
 
@@ -205,11 +215,15 @@ void write_lecturers(string file_name, Lecturer*& begin_lecturer);//имя фа�
 //Функция перезаписи файла с рапсианиями
 void write_schedules(string file_name, Schedule*& begin_schedule);//имя файла
 
+void write_subjects(string file_name, Subject* begin_subject);
+
+void write_class_rooms(string file_name, ClassRoom* begin_class_room);
+
 //Функция удаления всех расписаний по заданным параметрам
 void remove_all_schedules_by_parameter(int parameter, //параметр
-	int(*function)(Schedule*), 
+	int(*function)(Schedule*), //функция получения параметра расписания
 	Schedule*& begin_schedule, 
-	Schedule*& end_schedule);//функция получения параметра расписания
+	Schedule*& end_schedule);
 
 //Функция удаления всех расписаний по id кафедры
 void remove_all_lecturers_by_department_id(int department_id, 

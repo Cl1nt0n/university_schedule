@@ -134,3 +134,15 @@ struct Subject
 	}
 };
 
+struct ClassRoom
+{
+	int id;
+	ClassRoom* next;
+	ClassRoom* previous;
+
+	ClassRoom(int id)
+	{
+		this->id = id;
+	}
+};
+
