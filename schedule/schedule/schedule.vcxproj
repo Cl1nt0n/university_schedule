@@ -139,6 +139,7 @@
     <Text Include="Groups.txt" />
     <Text Include="Lecturers.txt" />
     <Text Include="Schedules.txt" />
+    <Text Include="Subjects.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

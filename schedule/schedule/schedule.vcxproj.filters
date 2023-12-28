@@ -43,5 +43,8 @@
     <Text Include="Schedules.txt">
       <Filter>Файлы ресурсов</Filter>
     </Text>
+    <Text Include="Subjects.txt">
+      <Filter>Файлы ресурсов</Filter>
+    </Text>
   </ItemGroup>
 </Project>

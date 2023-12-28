@@ -1,158 +1,186 @@
-#include "Structs.h"
+п»ї#include "Structs.h"
+#include "iomanip"
 /*************************************************************************
 *                                                                        *
-*           КУРСОВАЯ РАБОТА по дисциплине ПРОГРАММИРОВАНИЕ               *
+*           РљРЈР РЎРћР’РђРЇ Р РђР‘РћРўРђ РїРѕ РґРёСЃС†РёРїР»РёРЅРµ РџР РћР“Р РђРњРњРР РћР’РђРќРР•               *
 *                                                                        *
 **************************************************************************
 *Project type : Visual Studio Solution                                   *
-*Project name : Курсач                                                   *
+*Project name : РљСѓСЂСЃР°С‡                                                   *
 *File name    : main.cpp                                                 *
 *Language     : CPP, MSVS 2022                                           *
-*Programmer   : Чиняков Игорь Павлович, М3О-210Б-22                      *
+*Programmer   : Р§РёРЅСЏРєРѕРІ РРіРѕСЂСЊ РџР°РІР»РѕРІРёС‡, Рњ3Рћ-210Р‘-22                      *
 *Modified by  :                                                          *
 *Created      : 20.12.2023                                               *
 *Last revision: 26.12.2023                                               *
-*Comment      : Списочные базы данных    					             *
+*Comment      : РЎРїРёСЃРѕС‡РЅС‹Рµ Р±Р°Р·С‹ РґР°РЅРЅС‹С…    					             *
 *************************************************************************/
+
+//Р­Р»РµРјРµРЅС‚С‹ РґР»СЏ РїРѕСЃС‚СЂРѕРµРЅРёСЏ С‚Р°Р±Р»РёС†С‹
+const char VerticalLine = (char)186;//"в•‘" - Р’Р•Р РўРРљРђР›Р¬РќРђРЇ Р›РРќРРЇ
+const char HorizontalLine = (char)205;//"в•ђ" - Р“РћР РР—РћРќРўРђР›Р¬РќРђРЇ Р›РРќРРЇ
+const char TopLeftCorner = (char)201;//"в•”" - Р›Р•Р’Р«Р™ Р’Р•Р РҐРќРР™ РЈР“РћР›
+const char TopRightCorner = (char)187;//"в•—" - РџР РђР’Р«Р™ Р’Р•Р РҐРќРР™ РЈР“РћР›
+const char BottomLeftCorner = (char)200;//"в•љ" - Р›Р•Р’Р«Р™ РќРР–РќРР™ РЈР“РћР›
+const char BottomRightCorner = (char)188;//"в•ќ" - РџР РђР’Р«Р™ РќРР–РќРР™ РЈР“РћР›
+const char LeftJunction = (char)185;//"в•Ј" - РџРћР’РћР РћРў Р’Р›Р•Р’Рћ
+const char RightJunction = (char)204;//"в• " - РџРћР’РћР РћРў Р’РџР РђР’Рћ
+const char BottomJunction = (char)203;//"в•¦" - РџРћР’РћР РћРў Р’РќРР—
+const char TopJunction = (char)202;//"в•©" - РџРћР’РћР РћРў Р’Р’Р•Р РҐ
+const char CrossJunction = (char)206;//"в•¬" - РџР•Р Р•РљР Р•РЎРўРћРљ
+const char Space = (char)32;//РџСЂРѕР±РµР»
+
 //************************************************************************
-//*                     ПРОТОТИПЫ ФУНКЦИЙ                                *
+//*                     РџР РћРўРћРўРРџР« Р¤РЈРќРљР¦РР™                                *
 //************************************************************************
 
-//Функция считывания кафедр из файла
-void read_departments(string file_name, //имя файла
+//Р¤СѓРЅРєС†РёСЏ СЃС‡РёС‚С‹РІР°РЅРёСЏ РєР°С„РµРґСЂ РёР· С„Р°Р№Р»Р°
+void read_departments(string file_name, //РёРјСЏ С„Р°Р№Р»Р°
 	int& error_code, 
 	Department*& begin_department, 
-	Department*& end_department);//код ошибки
+	Department*& end_department);//РєРѕРґ РѕС€РёР±РєРё
 
-//Функция считывания групп из файла
-void read_groups(string file_name, //имя файла
+//Р¤СѓРЅРєС†РёСЏ СЃС‡РёС‚С‹РІР°РЅРёСЏ РіСЂСѓРїРї РёР· С„Р°Р№Р»Р°
+void read_groups(string file_name, //РёРјСЏ С„Р°Р№Р»Р°
 	int& error_code,
 	Group*& begin_group,
 	Group*& end_group,
-	Department*& begin_department);//код ошибки
+	Department*& begin_department);//РєРѕРґ РѕС€РёР±РєРё
 
-//Функция считывания преподавателей из файла
-void read_lecturers(string file_name, //имя файла
+//Р¤СѓРЅРєС†РёСЏ СЃС‡РёС‚С‹РІР°РЅРёСЏ РїСЂРµРїРѕРґР°РІР°С‚РµР»РµР№ РёР· С„Р°Р№Р»Р°
+void read_lecturers(string file_name, //РёРјСЏ С„Р°Р№Р»Р°
 	int& error_code,
 	Lecturer*& begin_lecturer,
 	Lecturer*& end_lecturer,
-	Department*& begin_department);//код ошибки
+	Department*& begin_department);//РєРѕРґ РѕС€РёР±РєРё
 
-//Функция считывания расписаний из файла
-void read_schedules(string file_name, //имя файла
+//Р¤СѓРЅРєС†РёСЏ СЃС‡РёС‚С‹РІР°РЅРёСЏ СЂР°СЃРїРёСЃР°РЅРёР№ РёР· С„Р°Р№Р»Р°
+void read_schedules(string file_name, //РёРјСЏ С„Р°Р№Р»Р°
 	int& error_code,
 	Schedule*& begin_schedule,
 	Schedule*& end_schedule,
 	Group*& begin_group,
-	Lecturer*& begin_lecturer);//код ошибки
+	Lecturer*& begin_lecturer,
+	Subject* begin_subject);//РєРѕРґ РѕС€РёР±РєРё
 
-//Функция проверки полей даты
-void check_date_fields(int year_int, //год 
-	int& error_code, //код ошибки
-	int minute_int, //минута
-	int hour_int, //час
-	int month_int, //месяц
-	int day_int);//день
+void read_subjects(string file_name, int& error_code, Subject*& begin_subject, Subject*& end_subject);
 
-//Функция проверки файла 
-void check_file(string file_name, //название файла
-	int& error_code); //код ошибки
+//Р¤СѓРЅРєС†РёСЏ РїСЂРѕРІРµСЂРєРё РїРѕР»РµР№ РґР°С‚С‹
+void check_date_fields(int year_int, //РіРѕРґ 
+	int& error_code, //РєРѕРґ РѕС€РёР±РєРё
+	int minute_int, //РјРёРЅСѓС‚Р°
+	int hour_int, //С‡Р°СЃ
+	int month_int, //РјРµСЃСЏС†
+	int day_int);//РґРµРЅСЊ
 
-//Функция вставки кафедры
-void insert_department(string name, //название
+//Р¤СѓРЅРєС†РёСЏ РїСЂРѕРІРµСЂРєРё С„Р°Р№Р»Р° 
+void check_file(string file_name, //РЅР°Р·РІР°РЅРёРµ С„Р°Р№Р»Р°
+	int& error_code); //РєРѕРґ РѕС€РёР±РєРё
+
+//Р¤СѓРЅРєС†РёСЏ РІСЃС‚Р°РІРєРё РєР°С„РµРґСЂС‹
+void insert_department(string name, //РЅР°Р·РІР°РЅРёРµ
 	int& error_code, 
 	Department*& begin_department, 
-	Department*& end_department); //код ошибки
+	Department*& end_department); //РєРѕРґ РѕС€РёР±РєРё
 
-//Функция вставки преподавателя
-void insert_lecturer(string name, //имя
-	int department_id, //id кафедры
-	int& error_code, //код ошибки
+//Р¤СѓРЅРєС†РёСЏ РІСЃС‚Р°РІРєРё РїСЂРµРїРѕРґР°РІР°С‚РµР»СЏ
+void insert_lecturer(string name, //РёРјСЏ
+	int department_id, //id РєР°С„РµРґСЂС‹
+	int& error_code, //РєРѕРґ РѕС€РёР±РєРё
 	Lecturer*& begin_lecturer, 
 	Lecturer*& end_lecturer,
 	Department*& begin_department); 
 
-//Функция вставки группы
-void insert_group(int department_id, //id кафедры
-	int id, //номер группы
+//Р¤СѓРЅРєС†РёСЏ РІСЃС‚Р°РІРєРё РіСЂСѓРїРїС‹
+void insert_group(int department_id, //id РєР°С„РµРґСЂС‹
+	int id, //РЅРѕРјРµСЂ РіСЂСѓРїРїС‹
 	int& error_code, 
 	Group*& begin_group, 
 	Group*& end_group, 
-	Department*& begin_department); //код ошибки
+	Department*& begin_department); //РєРѕРґ РѕС€РёР±РєРё
 
-//Функция вставки расписания
-void insert_schedule(string subject_name, //название предмета
-	int group_id, //id группы
-	int lecturer_id, //id преподавателя
-	int class_room_id, //id класса
-	int& error_code, //код ошибки
+//Р¤СѓРЅРєС†РёСЏ РІСЃС‚Р°РІРєРё СЂР°СЃРїРёСЃР°РЅРёСЏ
+void insert_schedule(Subject* subject, //РЅР°Р·РІР°РЅРёРµ РїСЂРµРґРјРµС‚Р°
+	int group_id, //id РіСЂСѓРїРїС‹
+	int lecturer_id, //id РїСЂРµРїРѕРґР°РІР°С‚РµР»СЏ
+	int class_room_id, //id РєР»Р°СЃСЃР°
+	int& error_code, //РєРѕРґ РѕС€РёР±РєРё
 	Date date, 
 	Schedule*& begin_schedule,
 	Schedule*& end_schedule,
 	Group*& begin_group, 
-	Lecturer*& begin_lecturer); //дата
+	Lecturer*& begin_lecturer, 
+	Subject*& begin_subject); //РґР°С‚Р°
 
-//Функция поиска кафедры по id
+void insert_subject(string name, int& error_code, Subject*& begin_department, Subject*& end_department);
+
+//Р¤СѓРЅРєС†РёСЏ РїРѕРёСЃРєР° РєР°С„РµРґСЂС‹ РїРѕ id
 Department* find_department_by_id(int id, Department*& begin_department); //id
 
-//Функция поиска кафедры по имени
-Department* find_department_by_name(string name, Department*& begin_department); //название кафедры
+//Р¤СѓРЅРєС†РёСЏ РїРѕРёСЃРєР° РєР°С„РµРґСЂС‹ РїРѕ РёРјРµРЅРё
+Department* find_department_by_name(string name, Department*& begin_department); //РЅР°Р·РІР°РЅРёРµ РєР°С„РµРґСЂС‹
 
-//Функция поиска группы по id
+Subject* find_subject_by_name(string name, Subject*& begin_subject);
+
+Subject* find_subject_by_id(int subject_id, Subject*& begin_subject);
+
+//Р¤СѓРЅРєС†РёСЏ РїРѕРёСЃРєР° РіСЂСѓРїРїС‹ РїРѕ id
 Group* find_group_by_id(int id, Group*& begin_group); //id
 
-//Функция поиска групп по id кафедры
-Group* find_groups_by_department_id(int department_id, Group*& begin_group); //id кафедры
+//Р¤СѓРЅРєС†РёСЏ РїРѕРёСЃРєР° РіСЂСѓРїРї РїРѕ id РєР°С„РµРґСЂС‹
+Group* find_groups_by_department_id(int department_id, Group*& begin_group); //id РєР°С„РµРґСЂС‹
 
-//Функция поиска преподавателя по id
+//Р¤СѓРЅРєС†РёСЏ РїРѕРёСЃРєР° РїСЂРµРїРѕРґР°РІР°С‚РµР»СЏ РїРѕ id
 Lecturer* find_lecturer_by_id(int id, Lecturer*& begin_lecturer); //id
 
-//Функция поиска преподавателей по имени
-Lecturer* find_lecturers_by_name(string name, Lecturer*& begin_lecturer); //имя
+//Р¤СѓРЅРєС†РёСЏ РїРѕРёСЃРєР° РїСЂРµРїРѕРґР°РІР°С‚РµР»РµР№ РїРѕ РёРјРµРЅРё
+Lecturer* find_lecturers_by_name(string name, Lecturer*& begin_lecturer); //РёРјСЏ
 
-//Функция поиска преподавателей по id кафедры
-Lecturer* find_lecturers_by_department_id(int department_id, Lecturer*& begin_lecturer); //id кафедры
+//Р¤СѓРЅРєС†РёСЏ РїРѕРёСЃРєР° РїСЂРµРїРѕРґР°РІР°С‚РµР»РµР№ РїРѕ id РєР°С„РµРґСЂС‹
+Lecturer* find_lecturers_by_department_id(int department_id, Lecturer*& begin_lecturer); //id РєР°С„РµРґСЂС‹
 
-//Функция поиска расписания по id
+//Р¤СѓРЅРєС†РёСЏ РїРѕРёСЃРєР° СЂР°СЃРїРёСЃР°РЅРёСЏ РїРѕ id
 Schedule* find_schedule_by_id(int id, Schedule*& begin_schedule); //id
 
-//Функция поиска расписания по дате
-Schedule* find_schedule_by_date(string hour, //час
-	string minute, //минута
-	string day, //день
-	string month, //месяц
+//Р¤СѓРЅРєС†РёСЏ РїРѕРёСЃРєР° СЂР°СЃРїРёСЃР°РЅРёСЏ РїРѕ РґР°С‚Рµ
+Schedule* find_schedule_by_date(string hour, //С‡Р°СЃ
+	string minute, //РјРёРЅСѓС‚Р°
+	string day, //РґРµРЅСЊ
+	string month, //РјРµСЃСЏС†
 	string year, 
-	Schedule*& begin_schedule); //год
+	Schedule*& begin_schedule); //РіРѕРґ
 
-//Функция проверки символа на цифру
-bool is_digit(char symbol); //символ
+//Р¤СѓРЅРєС†РёСЏ РїСЂРѕРІРµСЂРєРё СЃРёРјРІРѕР»Р° РЅР° С†РёС„СЂСѓ
+bool is_digit(char symbol); //СЃРёРјРІРѕР»
 
-//Функция печати кафедр
-void print_departments(Department* department); //кафедра
+//Р¤СѓРЅРєС†РёСЏ РїРµС‡Р°С‚Рё РєР°С„РµРґСЂ
+void print_departments(Department* department); //РєР°С„РµРґСЂР°
 
-//Функция печати групп
-void print_groups(Group* group); //группа
+//Р¤СѓРЅРєС†РёСЏ РїРµС‡Р°С‚Рё РіСЂСѓРїРї
+void print_groups(Group* group); //РіСЂСѓРїРїР°
 
-//Функция печати преподавателей
-void print_lecturers(Lecturer* lecturer); //преподаватель
+//Р¤СѓРЅРєС†РёСЏ РїРµС‡Р°С‚Рё РїСЂРµРїРѕРґР°РІР°С‚РµР»РµР№
+void print_lecturers(Lecturer* lecturer); //РїСЂРµРїРѕРґР°РІР°С‚РµР»СЊ
 
-//Функция печати расписаний
-void print_schedules(Schedule* schedule, Lecturer*& begin_lecturer); //расписание
+//Р¤СѓРЅРєС†РёСЏ РїРµС‡Р°С‚Рё СЂР°СЃРїРёСЃР°РЅРёР№
+void print_schedules(Schedule* schedule, Lecturer*& begin_lecturer, Subject* begin_subject); //СЂР°СЃРїРёСЃР°РЅРёРµ
 
-//Функция получения id группы рапсиания
-int get_schedule_group_id(Schedule* schedule);//расписание
+void print_subjects(Subject* subject);
 
-//Функция получения id преподавателя расписания
-int get_schedule_lecturer_id(Schedule* schedule);//расписание
+//Р¤СѓРЅРєС†РёСЏ РїРѕР»СѓС‡РµРЅРёСЏ id РіСЂСѓРїРїС‹ СЂР°РїСЃРёР°РЅРёСЏ
+int get_schedule_group_id(Schedule* schedule);//СЂР°СЃРїРёСЃР°РЅРёРµ
 
-//Функция получения id класса расписания
-int get_schedule_class_room_id(Schedule* schedule);//расписание
+//Р¤СѓРЅРєС†РёСЏ РїРѕР»СѓС‡РµРЅРёСЏ id РїСЂРµРїРѕРґР°РІР°С‚РµР»СЏ СЂР°СЃРїРёСЃР°РЅРёСЏ
+int get_schedule_lecturer_id(Schedule* schedule);//СЂР°СЃРїРёСЃР°РЅРёРµ
 
-//Функция получения названия предмета расписания
-string get_schedule_subject_name(Schedule* schedule);//расписание
+//Р¤СѓРЅРєС†РёСЏ РїРѕР»СѓС‡РµРЅРёСЏ id РєР»Р°СЃСЃР° СЂР°СЃРїРёСЃР°РЅРёСЏ
+int get_schedule_class_room_id(Schedule* schedule);//СЂР°СЃРїРёСЃР°РЅРёРµ
 
-//Функция проверки даты
-void check_date(string str_date, //параметры даты
+//Р¤СѓРЅРєС†РёСЏ РїРѕР»СѓС‡РµРЅРёСЏ РЅР°Р·РІР°РЅРёСЏ РїСЂРµРґРјРµС‚Р° СЂР°СЃРїРёСЃР°РЅРёСЏ
+int get_schedule_subject_id(Schedule* schedule);//СЂР°СЃРїРёСЃР°РЅРёРµ
+
+//Р¤СѓРЅРєС†РёСЏ РїСЂРѕРІРµСЂРєРё РґР°С‚С‹
+void check_date(string str_date, //РїР°СЂР°РјРµС‚СЂС‹ РґР°С‚С‹
 	int& error_code, 
 	int& hour_int, 
 	int& minute_int, 
@@ -165,158 +193,169 @@ void check_date(string str_date, //параметры даты
 	string& month, 
 	string& day);
 
-//Функция перезаписи файла с кафедрами
-void write_departments(string file_name, Department*& begin_department);//имя файла
+//Р¤СѓРЅРєС†РёСЏ РїРµСЂРµР·Р°РїРёСЃРё С„Р°Р№Р»Р° СЃ РєР°С„РµРґСЂР°РјРё
+void write_departments(string file_name, Department*& begin_department);//РёРјСЏ С„Р°Р№Р»Р°
 
-//Функция перезаписи файла с группами
-void write_groups(string file_name, Group*& begin_group);//имя файла
+//Р¤СѓРЅРєС†РёСЏ РїРµСЂРµР·Р°РїРёСЃРё С„Р°Р№Р»Р° СЃ РіСЂСѓРїРїР°РјРё
+void write_groups(string file_name, Group*& begin_group);//РёРјСЏ С„Р°Р№Р»Р°
 
-//Функция перезаписи файла с преподавателями
-void write_lecturers(string file_name, Lecturer*& begin_lecturer);//имя файла
+//Р¤СѓРЅРєС†РёСЏ РїРµСЂРµР·Р°РїРёСЃРё С„Р°Р№Р»Р° СЃ РїСЂРµРїРѕРґР°РІР°С‚РµР»СЏРјРё
+void write_lecturers(string file_name, Lecturer*& begin_lecturer);//РёРјСЏ С„Р°Р№Р»Р°
 
-//Функция перезаписи файла с рапсианиями
-void write_schedules(string file_name, Schedule*& begin_schedule);//имя файла
+//Р¤СѓРЅРєС†РёСЏ РїРµСЂРµР·Р°РїРёСЃРё С„Р°Р№Р»Р° СЃ СЂР°РїСЃРёР°РЅРёСЏРјРё
+void write_schedules(string file_name, Schedule*& begin_schedule);//РёРјСЏ С„Р°Р№Р»Р°
 
-//Функция удаления всех расписаний по заданным параметрам
-void remove_all_schedules_by_parameter(int parameter, //параметр
+//Р¤СѓРЅРєС†РёСЏ СѓРґР°Р»РµРЅРёСЏ РІСЃРµС… СЂР°СЃРїРёСЃР°РЅРёР№ РїРѕ Р·Р°РґР°РЅРЅС‹Рј РїР°СЂР°РјРµС‚СЂР°Рј
+void remove_all_schedules_by_parameter(int parameter, //РїР°СЂР°РјРµС‚СЂ
 	int(*function)(Schedule*), 
 	Schedule*& begin_schedule, 
-	Schedule*& end_schedule);//функция получения параметра расписания
+	Schedule*& end_schedule);//С„СѓРЅРєС†РёСЏ РїРѕР»СѓС‡РµРЅРёСЏ РїР°СЂР°РјРµС‚СЂР° СЂР°СЃРїРёСЃР°РЅРёСЏ
 
-//Функция удаления всех расписаний по id кафедры
+//Р¤СѓРЅРєС†РёСЏ СѓРґР°Р»РµРЅРёСЏ РІСЃРµС… СЂР°СЃРїРёСЃР°РЅРёР№ РїРѕ id РєР°С„РµРґСЂС‹
 void remove_all_lecturers_by_department_id(int department_id, 
 	Lecturer*& begin_lecturer, 
 	Lecturer*& end_lecturer, 
 	Schedule*& begin_schedule, 
-	Schedule*& end_schedule);//id кафедры
+	Schedule*& end_schedule);//id РєР°С„РµРґСЂС‹
 
-//Функция удаления всех групп по id кафедры
+//Р¤СѓРЅРєС†РёСЏ СѓРґР°Р»РµРЅРёСЏ РІСЃРµС… РіСЂСѓРїРї РїРѕ id РєР°С„РµРґСЂС‹
 void remove_all_groups_by_department_id(int department_id, 
 	Group*& begin_group, 
 	Group*& end_group, 
 	Schedule*& begin_schedule, 
-	Schedule*& end_schedule);//id кафедры
+	Schedule*& end_schedule);//id РєР°С„РµРґСЂС‹
 
-//Функция очистки списка задданного типа
+//Р¤СѓРЅРєС†РёСЏ РѕС‡РёСЃС‚РєРё СЃРїРёСЃРєР° Р·Р°РґРґР°РЅРЅРѕРіРѕ С‚РёРїР°
 template<typename T>
-void clear_list(T*& start, //начальный элемент
-	T*& end)//конечный элемент
+void clear_list(T*& start, //РЅР°С‡Р°Р»СЊРЅС‹Р№ СЌР»РµРјРµРЅС‚
+	T*& end)//РєРѕРЅРµС‡РЅС‹Р№ СЌР»РµРјРµРЅС‚
 {
-	//проверка на пустоту списка
+	//РїСЂРѕРІРµСЂРєР° РЅР° РїСѓСЃС‚РѕС‚Сѓ СЃРїРёСЃРєР°
 	if (start == nullptr)
 	{
-		cout << "Список пуст." << endl;
+		cout << "РЎРїРёСЃРѕРє РїСѓСЃС‚." << endl;
 		return;
 	}
 	T* current = start;
 	T* previous = end;
 
-	//проверка, имеется ли в списке только один элемент
+	//РїСЂРѕРІРµСЂРєР°, РёРјРµРµС‚СЃСЏ Р»Рё РІ СЃРїРёСЃРєРµ С‚РѕР»СЊРєРѕ РѕРґРёРЅ СЌР»РµРјРµРЅС‚
 	if (current == previous)
 	{
 		delete start;
 		start = nullptr;
 		end = nullptr;
-		cout << "Элемент удален из списка." << endl;
 		return;
 	}
 
-	//цикл, пока начальный элемент не удален
+	//С†РёРєР», РїРѕРєР° РЅР°С‡Р°Р»СЊРЅС‹Р№ СЌР»РµРјРµРЅС‚ РЅРµ СѓРґР°Р»РµРЅ
 	do
 	{
 		current = start;
 		start->previous->next = start->next;
 		start->next->previous = start->previous;
 		start = start->next;
-		delete current;
-		if (start == current)
+		if (current == start)
 			start = nullptr;
+		delete current;
 	} while (start != nullptr);
 }
 
-
-//Функция удаления элемента из списка
+//Р¤СѓРЅРєС†РёСЏ СѓРґР°Р»РµРЅРёСЏ СЌР»РµРјРµРЅС‚Р° РёР· СЃРїРёСЃРєР°
 template<typename T>
-void remove_element_from_list(T*& start, //начальный элемент
-	T*& end, //конечный элемент
-	int id)//id элемента
+void remove_element_from_list(T*& start, //РЅР°С‡Р°Р»СЊРЅС‹Р№ СЌР»РµРјРµРЅС‚
+	T*& end, //РєРѕРЅРµС‡РЅС‹Р№ СЌР»РµРјРµРЅС‚
+	int id)//id СЌР»РµРјРµРЅС‚Р°
 {
-	//проверка на пустоту списка
+	//РїСЂРѕРІРµСЂРєР° РЅР° РїСѓСЃС‚РѕС‚Сѓ СЃРїРёСЃРєР°
 	if (start == nullptr)
 	{
-		cout << "Список пуст." << endl;
+		cout << "РЎРїРёСЃРѕРє РїСѓСЃС‚." << endl;
 		return;
 	}
 
 	T* current = start;
 	T* previous = end;
 
-	//проверка, имеется ли в списке только один элемент
+	//РїСЂРѕРІРµСЂРєР°, РёРјРµРµС‚СЃСЏ Р»Рё РІ СЃРїРёСЃРєРµ С‚РѕР»СЊРєРѕ РѕРґРёРЅ СЌР»РµРјРµРЅС‚
 	if (current == previous)
 	{
-		//проверка, является ли этот элемент искомым
+		//РїСЂРѕРІРµСЂРєР°, СЏРІР»СЏРµС‚СЃСЏ Р»Рё СЌС‚РѕС‚ СЌР»РµРјРµРЅС‚ РёСЃРєРѕРјС‹Рј
 		if (current->id == id)
 		{
 			delete start;
 			start = nullptr;
 			end = nullptr;
-			cout << "Элемент удален из списка." << endl;
+			cout << "Р­Р»РµРјРµРЅС‚ СѓРґР°Р»РµРЅ РёР· СЃРїРёСЃРєР°." << endl;
 			return;
 		}
 	}
 
 
-	//цикл, пока не перебраны все элементы списка 
+	//С†РёРєР», РїРѕРєР° РЅРµ РїРµСЂРµР±СЂР°РЅС‹ РІСЃРµ СЌР»РµРјРµРЅС‚С‹ СЃРїРёСЃРєР° 
 	do
 	{
-		//проверка, является ли элемент искомым
+		//РїСЂРѕРІРµСЂРєР°, СЏРІР»СЏРµС‚СЃСЏ Р»Рё СЌР»РµРјРµРЅС‚ РёСЃРєРѕРјС‹Рј
 		if (current->id == id)
 		{
-			//проверка, является ли этот элемент начальным
+			//РїСЂРѕРІРµСЂРєР°, СЏРІР»СЏРµС‚СЃСЏ Р»Рё СЌС‚РѕС‚ СЌР»РµРјРµРЅС‚ РЅР°С‡Р°Р»СЊРЅС‹Рј
 			if (current == start)
 			{
 				start = current->next;
 				end->next = current->next;
+				delete current;
+				cout << "Р­Р»РµРјРµРЅС‚ СѓРґР°Р»РµРЅ РёР· СЃРїРёСЃРєР°." << endl;
+				current = nullptr;
+				return;
 			}
+			if (current == end)
+			{
+				end = current->previous;
+				end->next = current->next;
+				delete current;
+				cout << "Р­Р»РµРјРµРЅС‚ СѓРґР°Р»РµРЅ РёР· СЃРїРёСЃРєР°." << endl;
+				current = nullptr;
+				return;
+			}
+
 			current->previous->next = current->next;
 			current->next->previous = current->previous;
 			delete current;
-			cout << "Элемент удален из списка." << endl;
+			cout << "Р­Р»РµРјРµРЅС‚ СѓРґР°Р»РµРЅ РёР· СЃРїРёСЃРєР°." << endl;
 			return;
 		}
 
 		current = current->next;
-	} while (current != start);
+	} while (current != start || current != nullptr);
 
-	cout << "Элемент не найден." << endl;
+	cout << "Р­Р»РµРјРµРЅС‚ РЅРµ РЅР°Р№РґРµРЅ." << endl;
 }
 
-
-//Функция нахождения расписания по заданным параметрам
+//Р¤СѓРЅРєС†РёСЏ РЅР°С…РѕР¶РґРµРЅРёСЏ СЂР°СЃРїРёСЃР°РЅРёСЏ РїРѕ Р·Р°РґР°РЅРЅС‹Рј РїР°СЂР°РјРµС‚СЂР°Рј
 template<typename T>
-Schedule* find_schedule_by_parameters(T parameter, //параметр
-	T(*function)(Schedule*), Schedule*& begin_schedule, Schedule*& end_schedule)//функция получения поля структуры
+Schedule* find_schedule_by_parameters(T parameter, //РїР°СЂР°РјРµС‚СЂ
+	T(*function)(Schedule*), Schedule*& begin_schedule, Schedule*& end_schedule)//С„СѓРЅРєС†РёСЏ РїРѕР»СѓС‡РµРЅРёСЏ РїРѕР»СЏ СЃС‚СЂСѓРєС‚СѓСЂС‹
 {
-	//Объявление переменных
+	//РћР±СЉСЏРІР»РµРЅРёРµ РїРµСЂРµРјРµРЅРЅС‹С…
 	Schedule* schedule = begin_schedule;
 
 	if (schedule == nullptr)
 		return nullptr;
 
-	Schedule* temp = new Schedule(schedule->subject_name,
+	Schedule* temp = new Schedule(schedule->subject_id,
 		schedule->id,
 		schedule->group_id, schedule->lecturer_id, schedule->class_room_id, schedule->date_of_lesson);
 	temp->next = nullptr;
 	temp->previous = nullptr;
 	Schedule* begin_temp = temp;
 
-	//Цикл, пока не перебраны все элементы списка
+	//Р¦РёРєР», РїРѕРєР° РЅРµ РїРµСЂРµР±СЂР°РЅС‹ РІСЃРµ СЌР»РµРјРµРЅС‚С‹ СЃРїРёСЃРєР°
 	do
 	{
-		//проверка, является ли элемент искомым
+		//РїСЂРѕРІРµСЂРєР°, СЏРІР»СЏРµС‚СЃСЏ Р»Рё СЌР»РµРјРµРЅС‚ РёСЃРєРѕРјС‹Рј
 		if (function(schedule) == parameter)
 		{
-			temp->next = new Schedule(schedule->subject_name,
+			temp->next = new Schedule(schedule->subject_id,
 				schedule->id,
 				schedule->group_id, schedule->lecturer_id, schedule->class_room_id, schedule->date_of_lesson);
 			begin_temp->previous = temp->next;
@@ -326,14 +365,14 @@ Schedule* find_schedule_by_parameters(T parameter, //параметр
 		schedule = schedule->next;
 	} while (schedule != begin_schedule);
 
-	//Проверка, если не найден ни один элемент
+	//РџСЂРѕРІРµСЂРєР°, РµСЃР»Рё РЅРµ РЅР°Р№РґРµРЅ РЅРё РѕРґРёРЅ СЌР»РµРјРµРЅС‚
 	if (temp->next == nullptr)
 	{
-		//Удаление первого элемента нового списка
+		//РЈРґР°Р»РµРЅРёРµ РїРµСЂРІРѕРіРѕ СЌР»РµРјРµРЅС‚Р° РЅРѕРІРѕРіРѕ СЃРїРёСЃРєР°
 		delete temp;
 		return nullptr;
 	}
-	//Удаление первого элемента нового списка
+	//РЈРґР°Р»РµРЅРёРµ РїРµСЂРІРѕРіРѕ СЌР»РµРјРµРЅС‚Р° РЅРѕРІРѕРіРѕ СЃРїРёСЃРєР°
 	temp->next = begin_temp->next;
 	begin_temp->next->previous = temp;
 	begin_temp = begin_temp->next;

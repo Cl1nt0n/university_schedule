@@ -18,11 +18,6 @@
 #include "string"
 using namespace std;
 
-extern int department_id;
-extern int group_id;
-extern int lecturer_id;
-extern int schedule_id;
-
 //************************************************************************
 //*                           СТРУКТУРЫ                                  *
 //************************************************************************
@@ -38,8 +33,6 @@ struct Department
 	Department(string name)
 	{
 		this->name = name;
-		department_id++;
-		id = department_id;
 	}
 };
 
@@ -76,28 +69,26 @@ struct Schedule
 	int group_id;//номер группы
 	int lecturer_id;//id преподавателя
 	int class_room_id;//номер аудитории
-	string subject_name;//название предмета
+	int subject_id;//название предмета
 	Date date_of_lesson;//дата проведения
 	Schedule* next;//указатель на следующее расписание
 	Schedule* previous;//указатель на предыдущее расписание
 
 	//конструктор
-	Schedule(string subject_name, int group_id, int lecturer_id, int class_room_id, Date date)
+	Schedule(int subject_id, int group_id, int lecturer_id, int class_room_id, Date date)
 	{
 		date_of_lesson = date;
-		this->subject_name = subject_name;
+		this->subject_id = subject_id;
 		this->group_id = group_id;
 		this->lecturer_id = lecturer_id;
 		this->class_room_id = class_room_id;
-		schedule_id++;
-		id = schedule_id;
 	}
 
 	//конструктор
-	Schedule(string subject_name, int id, int group_id, int lecturer_id, int class_room_id, Date date)
+	Schedule(int subject_id, int id, int group_id, int lecturer_id, int class_room_id, Date date)
 	{
 		date_of_lesson = date;
-		this->subject_name = subject_name;
+		this->subject_id = subject_id;
 		this->group_id = group_id;
 		this->lecturer_id = lecturer_id;
 		this->class_room_id = class_room_id;
@@ -119,8 +110,6 @@ struct Lecturer
 	{
 		this->name = name;
 		this->department_id = department_id;
-		lecturer_id++;
-		id = lecturer_id;
 	}
 
 	//конструктор
@@ -132,18 +121,16 @@ struct Lecturer
 	}
 };
 
-//struct Subject
-//{
-//	int id;
-//	string name;
-//	Subject* next;
-//	Subject* previous;
-//
-//	Subject(string name)
-//	{
-//		this->name = name;
-//		subject_id++;
-//		id = subject_id;
-//	}
-//};
+struct Subject
+{
+	int id;
+	string name;
+	Subject* next;
+	Subject* previous;
+
+	Subject(string name)
+	{
+		this->name = name;
+	}
+};
 

@@ -20,12 +20,6 @@
 #include <Windows.h>
 #include "Functions.h"
 
-int department_id = 0;
-int schedule_id = 0;
-int lecturer_id = 0;
-int class_room_id = 0;
-int subject_id = 0;
-
 using namespace std;
 
 Department* b_department = nullptr;
@@ -40,10 +34,14 @@ Schedule* e_schedule = nullptr;
 Lecturer* b_lecturer = nullptr;
 Lecturer* e_lecturer = nullptr;
 
+Subject* b_subject = nullptr;
+Subject* e_subject = nullptr;
+
 const string departments_file = "Departments.txt";
 const string groups_file = "Groups.txt";
 const string lecturers_file = "Lecturers.txt";
 const string schedules_file = "Schedules.txt";
+const string subjects_file = "Subjects.txt";
 
 void print_menu()
 {
@@ -52,22 +50,24 @@ void print_menu()
 	cout << "2  - Вывод информации о группах." << endl;
 	cout << "3  - Вывод информации о преподавателях." << endl;
 	cout << "4  - Вывод информации о расписании." << endl;
-	cout << "5  - Поиск расписания по номеру аудитории." << endl;
-	cout << "6  - Поиск расписания по id преподавателя." << endl;
-	cout << "7  - Поиск расписания по номеру группы." << endl;
-	cout << "8  - Поиск расписания по предмету." << endl;
-	cout << "9  - Поиск расписания по дате." << endl;
-	cout << "10 - Вставка новой кафедры." << endl;
-	cout << "11 - Вставка новой группы." << endl;
-	cout << "12 - Вставка нового расписания." << endl;
-	cout << "13 - Вставка нового преподавателя." << endl;
-	cout << "14 - Удаление кафедры." << endl;
-	cout << "15 - Удаление группы." << endl;
-	cout << "16 - Удаление преподавателя." << endl;
-	cout << "17 - Удаление расписания." << endl;
-	cout << "18 - Поиск преподавателей по имени." << endl;
-	cout << "19 - Поиск преподавателей по id кафедры." << endl;
-	cout << "20 - Поиск групп по id кафедры." << endl;
+	cout << "5  - Вывод информации о предметах." << endl;
+	cout << "6  - Поиск расписания по номеру аудитории." << endl;
+	cout << "7  - Поиск расписания по id преподавателя." << endl;
+	cout << "8  - Поиск расписания по номеру группы." << endl;
+	cout << "9  - Поиск расписания по предмету." << endl;
+	cout << "10 - Поиск расписания по дате." << endl;
+	cout << "11 - Вставка новой кафедры." << endl;
+	cout << "12 - Вставка новой группы." << endl;
+	cout << "13 - Вставка нового расписания." << endl;
+	cout << "14 - Вставка нового преподавателя." << endl;
+	cout << "15 - Удаление кафедры." << endl;
+	cout << "16 - Удаление группы." << endl;
+	cout << "17 - Удаление преподавателя." << endl;
+	cout << "18 - Удаление расписания." << endl;
+	cout << "19 - Удаление предмета." << endl;
+	cout << "20 - Поиск преподавателей по имени." << endl;
+	cout << "21 - Поиск преподавателей по id кафедры." << endl;
+	cout << "22 - Поиск групп по id кафедры." << endl;
 	cout << "0  - Выход из программы. Сохранение изменений." << endl;
 }
 
@@ -81,10 +81,7 @@ int main()
 	int error_code1 = 0;
 	int error_code2 = 0;
 	int error_code3 = 0;
-	string subject;
-	string str_date;
-	string department_name;
-	string lecturer_name;
+	int error_code4 = 0;
 	int class_room_id;
 	int date_error_code = 0;
 	int add_department_error_code = 0;
@@ -95,20 +92,27 @@ int main()
 	int department_id;
 	int lecturer_id;
 	int schedule_id;
+	int subject_id;
 	int year_int = -1, minute_int = -1, hour_int = -1, month_int = -1, day_int = -1;
+	string subject_name;
+	string str_date;
+	string department_name;
+	string lecturer_name;
 	string year = "", minute = "", hour = "", month = "", day = "";
 	Date date;
 	Schedule* schedule = nullptr;
 	Lecturer* lecturer = nullptr;
 	Group* group = nullptr;
 	Department* department = nullptr;
+	Subject* subject = nullptr;
 
 	check_file(departments_file, error_code);
 	check_file(groups_file, error_code1);
 	check_file(lecturers_file, error_code2);
+	check_file(subjects_file, error_code4);
 	check_file(schedules_file, error_code3);
 
-	if (error_code != 0 || error_code1 != 0 || error_code2 != 0 || error_code3 != 0)
+	if (error_code != 0 || error_code1 != 0 || error_code2 != 0 || error_code3 != 0 || error_code4 != 0)
 		return 0;
 	else
 		cout << "Файлы прошли проверку." << endl;
@@ -116,8 +120,11 @@ int main()
 	read_departments(departments_file, error_code, b_department, e_department);
 	read_groups(groups_file, error_code1, b_group, e_group, b_department);
 	read_lecturers(lecturers_file, error_code2, b_lecturer, e_lecturer, b_department);
-	read_schedules(schedules_file, error_code3, b_schedule, e_schedule, b_group, b_lecturer);
-	if (error_code != 0 || error_code1 != 0 || error_code2 != 0 || error_code3 != 0)
+	read_subjects(subjects_file, error_code4, b_subject, e_subject);
+	read_schedules(schedules_file, error_code3, b_schedule, e_schedule, b_group, b_lecturer, b_subject);
+
+
+	if (error_code != 0 || error_code1 != 0 || error_code2 != 0 || error_code3 != 0 || error_code4 != 0)
 		return 0;
 	else
 		cout << "Все данные успешно считаны." << endl << endl;
@@ -146,9 +153,12 @@ int main()
 			print_lecturers(b_lecturer);
 			break;
 		case 4:
-			print_schedules(b_schedule, b_lecturer);
+			print_schedules(b_schedule, b_lecturer, b_subject);
 			break;
 		case 5:
+			print_subjects(b_subject);
+			break;
+		case 6:
 			cout << "Введите номер аудитории:" << endl;
 			while (!(cin >> class_room_id))
 			{
@@ -158,11 +168,11 @@ int main()
 			}
 
 			schedule = find_schedule_by_parameters(class_room_id, get_schedule_class_room_id, b_schedule, e_schedule);
-			print_schedules(schedule, b_lecturer);
+			print_schedules(schedule, b_lecturer, b_subject);
 			clear_list(schedule, schedule->previous);
-			print_schedules(schedule, b_lecturer);
+			print_schedules(schedule, b_lecturer, b_subject);
 			break;
-		case 6:
+		case 7:
 			cout << "Введите id преподавателя:" << endl;
 			while (!(cin >> lecturer_id))
 			{
@@ -171,11 +181,11 @@ int main()
 				cin.ignore(10000, '\n');
 			}
 			schedule = find_schedule_by_parameters(lecturer_id, get_schedule_lecturer_id, b_schedule, e_schedule);
-			print_schedules(schedule, b_lecturer);
+			print_schedules(schedule, b_lecturer, b_subject);
 			clear_list(schedule, schedule->previous);
-			print_schedules(schedule, b_lecturer);
+			print_schedules(schedule, b_lecturer, b_subject);
 			break;
-		case 7:
+		case 8:
 			cout << "Введите номер группы:" << endl;
 			while (!(cin >> group_id))
 			{
@@ -184,20 +194,26 @@ int main()
 				cin.ignore(10000, '\n');
 			}
 			schedule = find_schedule_by_parameters(group_id, get_schedule_group_id, b_schedule, e_schedule);
-			print_schedules(schedule, b_lecturer);
+			print_schedules(schedule, b_lecturer, b_subject);
 			clear_list(schedule, schedule->previous);
-			print_schedules(schedule, b_lecturer);
-			break;
-		case 8:
-			cout << "Введите название предмета:" << endl;
-			getchar();
-			getline(cin, subject);
-			schedule = find_schedule_by_parameters(subject, get_schedule_subject_name, b_schedule, e_schedule);
-			print_schedules(schedule, b_lecturer);
-			clear_list(schedule, schedule->previous);
-			print_schedules(schedule, b_lecturer);
+			print_schedules(schedule, b_lecturer, b_subject);
 			break;
 		case 9:
+			cout << "Введите название предмета:" << endl;
+			getchar();
+			getline(cin, subject_name);
+			subject = find_subject_by_name(subject_name, b_subject);
+			if (subject == nullptr)
+			{
+				cout << "Предмет не найден." << endl;
+				break;
+			}
+			schedule = find_schedule_by_parameters(subject->id, get_schedule_subject_id, b_schedule, e_schedule);
+			print_schedules(schedule, b_lecturer, b_subject);
+			clear_list(schedule, schedule->previous);
+			print_schedules(schedule, b_lecturer, b_subject);
+			break;
+		case 10:
 			cout << "Введите дату в формате xx:xx xx:xx:xx:" << endl;
 			getchar();
 			getline(cin, str_date);
@@ -214,11 +230,11 @@ int main()
 				break;
 			}
 			schedule = find_schedule_by_date(hour, minute, day, month, year, b_schedule);
-			print_schedules(schedule, b_lecturer);
+			print_schedules(schedule, b_lecturer, b_subject);
 			clear_list(schedule, schedule->previous);
-			print_schedules(schedule, b_lecturer);
+			print_schedules(schedule, b_lecturer, b_subject);
 			break;
-		case 10:
+		case 11:
 			cout << "Введите название кафедры." << endl;
 			getchar();
 			getline(cin, department_name);
@@ -229,7 +245,7 @@ int main()
 			else
 				cout << "Добавление произведено успешно." << endl;
 			break;
-		case 11:
+		case 12:
 			cout << "Введите номер группы:" << endl;
 			while (!(cin >> group_id))
 			{
@@ -250,10 +266,10 @@ int main()
 			else
 				cout << "Добавление призведено успешно." << endl;
 			break;
-		case 12:
+		case 13:
 			cout << "Введите название предмета:" << endl;
 			getchar();
-			getline(cin, subject);
+			getline(cin, subject_name);
 			cout << "Введите номер группы:" << endl;
 			while (!(cin >> group_id))
 			{
@@ -275,7 +291,7 @@ int main()
 				cin.clear();
 				cin.ignore(10000, '\n');
 			}
-			cout << "Введите дату в формате xx:xx xx:xx:xx:" << endl;
+			cout << "Введите дату в формате hh:mm dd:mm:yyyy:" << endl;
 			getchar();
 			getline(cin, str_date);
 			check_date(str_date, date_error_code, hour_int, minute_int, day_int, month_int, year_int, year, minute, hour, month, day);
@@ -297,13 +313,13 @@ int main()
 			date.month = month;
 			date.year = year;
 
-			insert_schedule(subject, group_id, lecturer_id, class_room_id, add_schedule_error_code, date, b_schedule, e_schedule, b_group, b_lecturer);
+			insert_schedule(find_subject_by_name(subject_name, b_subject), group_id, lecturer_id, class_room_id, add_schedule_error_code, date, b_schedule, e_schedule, b_group, b_lecturer, b_subject);
 			if (add_schedule_error_code != 0)
 				cout << "Ошибка при добавлении расписания." << endl;
 			else
 				cout << "Добавление произведено успешно." << endl;
 			break;
-		case 13:
+		case 14:
 			cout << "Введите имя преподавателя:" << endl;
 			getchar();
 			getline(cin, lecturer_name);
@@ -320,7 +336,7 @@ int main()
 			else
 				cout << "Добавление произведено успешно." << endl;
 			break;
-		case 14:
+		case 15:
 			cout << "Введите id кафедры:" << endl;
 			while (!(cin >> department_id))
 			{
@@ -340,7 +356,7 @@ int main()
 			remove_all_lecturers_by_department_id(department_id, b_lecturer, e_lecturer, b_schedule, e_schedule);
 			remove_element_from_list(b_department, e_department, department_id);
 			break;
-		case 15:
+		case 16:
 			cout << "Введите номер группы:" << endl;
 			while (!(cin >> group_id))
 			{
@@ -357,7 +373,7 @@ int main()
 			remove_all_schedules_by_parameter(group_id, get_schedule_group_id, b_schedule, e_schedule);
 			remove_element_from_list(b_group, e_group, group_id);
 			break;
-		case 16:
+		case 17:
 			cout << "Введите id преподавателя:" << endl;
 			while (!(cin >> lecturer_id))
 			{
@@ -374,7 +390,7 @@ int main()
 			remove_all_schedules_by_parameter(lecturer_id, get_schedule_lecturer_id, b_schedule, e_schedule);
 			remove_element_from_list(b_lecturer, e_lecturer, lecturer_id);
 			break;
-		case 17:
+		case 18:
 			cout << "Введите id расписания:" << endl;
 			while (!(cin >> schedule_id))
 			{
@@ -384,7 +400,25 @@ int main()
 			}
 			remove_element_from_list(b_schedule, e_schedule, schedule_id);
 			break;
-		case 18:
+		case 19:
+			cout << "Введите id предмета:" << endl;
+			while (!(cin >> subject_id))
+			{
+				cout << "Ошибка. Вводимое значение должно быть числом." << endl;
+				cin.clear();
+				cin.ignore(10000, '\n');
+			}
+
+			if (find_subject_by_id(subject_id, b_subject) == nullptr)
+			{
+				cout << "Предмет не найден." << endl; 
+				break;
+			}
+
+			remove_all_schedules_by_parameter(subject_id, get_schedule_subject_id, b_schedule, e_schedule);
+			remove_element_from_list(b_subject, e_subject, subject_id);
+			break;
+		case 20:
 			cout << "Введите имя преподавателя:" << endl;
 			getchar();
 			getline(cin, lecturer_name);
@@ -392,7 +426,7 @@ int main()
 			print_lecturers(lecturer);
 			clear_list(lecturer, lecturer->previous);
 			break;
-		case 19:
+		case 21:
 			cout << "Введите id кафедры:" << endl;
 			while (!(cin >> department_id))
 			{
@@ -404,7 +438,7 @@ int main()
 			print_lecturers(lecturer);
 			clear_list(lecturer, lecturer->previous);
 			break;
-		case 20:
+		case 22:
 			cout << "Введите id кафедры:" << endl;
 			while (!(cin >> department_id))
 			{
